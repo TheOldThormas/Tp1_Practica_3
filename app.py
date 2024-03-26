@@ -22,7 +22,7 @@ def subir_archivo():
     imagen = request.files['archivo']
     if imagen.filename == '':
         return 'ningún archivo'
-    if imagen:
+    if imagen: #Acordarse de poner los .title en cada captura del formulario para que queden los nombres con mayusculas
         nombre_archivo=secure_filename(imagen.filename)
         tipo_archivo=nombre_archivo.rsplit('.', 1)[1]
         nombre_archivo=nombre_archivo.rsplit('.', 1)[0]

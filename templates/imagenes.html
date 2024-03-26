@@ -1,19 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div>
-        {% for fila in tabla %}
-        <div>
-            <div>
-                <img src="{{ url_for('static', filename=fila[5]) }}" alt="...">
+{% extends './layout.html' %}
+{% block tittle %}prueba{% endblock %}
+{% block body %}
+<div class="container text-center mt-4">
+    <h1 class="display-4">Productos</h1>
+</div>
+<div class="container mt-4">
+    {%for x in tabla%}
+    {% if loop.index0 % 3 == 0 %}
+    <div class="row mb-4">
+    {% endif %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                <img src="{{ url_for('static', filename=x[5]) }}" class="card-img-top" alt="...">
+                <div class="card-body">  
+                    <h3><small class="text-body-secondary">Nombre: </small>{{x[1]}}</h3>
+                    <h3><small class="text-body-secondary">Precio: </small>${{x[2]}}</h3>
+                    <h3><small class="text-body-secondary">Descripcion: </small>{{x[3]}}</h3>
+                </div>
             </div>
         </div>
-        {% endfor %}  
-    </div>    
-</body>
-</html>
+    {% if loop.index0 % 3 == 2 or loop.last %}
+        </div>
+    {% endif %}
+    {%endfor%}  
+</div>
+
+
+
+
+
+   
+{% endblock %}

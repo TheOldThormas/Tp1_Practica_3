@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        {% for fila in tabla %}
+        <div>
+            <div>
+                <img src="{{ url_for('static', filename=fila[5]) }}" alt="...">
+            </div>
+        </div>
+        {% endfor %}  
+    </div>    
+</body>
+</html>

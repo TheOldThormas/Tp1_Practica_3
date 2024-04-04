@@ -1,0 +1,60 @@
+{% extends './layout.html' %}
+{% block title %}Catalogo de productos{% endblock %}
+{% block body %}
+
+<style>
+
+body{
+background-color: aquamarine;
+
+}
+h3{
+    color: aliceblue;
+}
+h4{
+    color: #c6c9cc;
+}
+div{
+
+    
+}
+
+a{
+    background-color: #2a7a7a;
+}
+h1{
+    background-color: #eff1f12a;
+}
+
+</style>
+<div class="container text-center mt-4">
+    <h1 class="display-4">Productos</h1>
+    <a href="/cargar" class="btn btn-success mx-2"><i class="bi bi-plus-lg"></i>Nuevo producto</a>
+</div>
+<div class="container mt-4" style="background-color: #62f8f800;">
+    {%for x in tabla%}
+    {% if loop.index0 % 3 == 0 %}
+    <div class="row mb-4" style="background-color: #2a7a7a02;">
+    {% endif %}
+        <div class="col-md-4 mt-3" style="background-color: #2a7a7a9d;">
+            <div class="card h-100" style="background-color: #2a7a7a98;">
+                <img src="{{ url_for('static', filename=x[5]) }}" class="card-img-top img-fluid" alt="..." style= "max-width: 100%; height: auto; background-color: rgba(127, 255, 212, 0.616);">
+                <div class="card-body">
+                    <h3><small class="text-body-secondary" style="background-color:#2a7a7a;"><h4>Nombre: </h4></small>{{x[1]}}</h3>
+                    <h3><small class="text-body-secondary" style="background-color:#2a7a7a;"><h4>Precio:</h4> </small>${{x[2]}}</h3>
+                    <h3><small class="text-body-secondary" style="background-color:#2a7a7a;" ><h4>Descripcion: </h4></small>{{x[3]}}</h3>
+                </div>
+            </div>
+        </div>
+    {% if loop.index0 % 3 == 2 or loop.last %}
+        </div>
+    {% endif %}
+    {%endfor%}
+</div>
+
+
+
+
+
+   
+{% endblock %}

@@ -48,7 +48,6 @@ def subir_archivo():
 @app.route('/modificar', methods=['GET','POST'])
 def modificar():
     id_producto=request.args.get('id_producto')
-    print (id_producto)
     try:
         cursor=conexion.connection.cursor()
         sql=f"SELECT * FROM producto where idproducto = {id_producto}" 
@@ -99,6 +98,20 @@ def imagenes():
     except Exception as e:
         print("Error MySQL:", str(e))
     return render_template('index.html',tabla=tabla)
+
+@app.route("/eliminar", methods=['GET','POST'])
+def eliminar():
+    id_producto=request.args.get('id_producto')
+    cursor=conexion.connection.cursor()
+    sql=f"SELECT imagen_producto FROM producto WHERE idproducto = {id_producto}"
+    cursor.execute(sql)
+    resultado=cursor.fetchone()
+    nombre_imagen=resultado[0]
+    sql=f"DELETE FROM producto WHERE idproducto = {id_producto}"
+    cursor.execute(sql)
+    conexion.connection.commit()
+    os.remove(os.path.join('static', nombre_imagen))
+    return redirect('/')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

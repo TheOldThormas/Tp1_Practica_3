@@ -50,6 +50,9 @@
 <h1>Modificar {{tabla[1]}}</h1>
 <div class="container mt-4">
   <form action="/confirmar" method="post" enctype="multipart/form-data">
+    <div class="col-md-8 mt-4 mb-4 ">
+        <img src="{{ url_for('static', filename=tabla[5]) }}" class="mx-4 mt-4" width="200" height="200" alt="...">
+    </div>
       <div class="col-md-8 mt-4 mb-4 ">
           <input type="hidden" name="id_producto" value="{{tabla[0]}}">
           <input type="hidden" name="imagen_actual" value="{{tabla[5]}}">
@@ -70,7 +73,7 @@
       </div>
       <div class="col-md-8 mt-4 mb-4 ">
           <label for="formFile" class="form-label">Imagen:</label>
-          <input class="form-control" type="file" id="formFile" name="archivo" accept="image/*" >
+          <input class="form-control" type="file" id="formFile" name="archivo" accept="image/*" value="{{tabla[5]}}">
         </div>
       <div>
           <button type="submit" class="btn btn-primary col-md-2 mt-4 mb-4">

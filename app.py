@@ -12,6 +12,20 @@ app.config['MYSQL_DB'] = 'imagenes'
 conexion = MySQL(app)
 
 
+@app.context_processor
+def categoria():
+    datos = {}
+    try:
+        cursor = conexion.connection.cursor()
+        sql = "SELECT * FROM categoria"  # esto es del SQL
+        cursor.execute(sql)
+        tabla = cursor.fetchall()
+        datos["categorias"] = tabla  # ginga
+    except Exception as e:
+        print("Error MySQL:", str(e))
+    return datos
+
+
 @app.route('/cargar')
 def productos():
     return render_template('formulario.html')

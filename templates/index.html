@@ -5,16 +5,6 @@
     <h1 class="display-4">Productos</h1>
     <a href="/cargar" class="btn btn-success mx-2"><i class="bi bi-plus-lg"></i>Nuevo producto</a>
 </div>
-
-<div class="container text-center mt-4">
-    <select class="form-select" aria-label="Default select example">
-        <option selected>selecionar categoria</option>
-        {%for fila in categorias%}
-        <option value="{{fila[0]}}">{{fila[1]}}</option>
-        {%endfor%}
-    </select>
-</div>
-
 <div class="container mt-4">
     {%for x in tabla%}
     {% if loop.index0 % 3 == 0 %}
@@ -28,6 +18,8 @@
                     <h3><small class="text-body-secondary">Nombre: </small>{{x[1]}}</h3>
                     <h3><small class="text-body-secondary">Precio: </small>${{x[2]}}</h3>
                     <h3><small class="text-body-secondary">Descripcion: </small>{{x[3]}}</h3>
+                    <a href="/eliminar?id_producto={{x[0]}}" class="btn btn-danger mx-2">Eliminar</a>
+                    <a href="/modificar?id_producto={{x[0]}}" class="btn btn-warning mx-2">Modificar</a>
                 </div>
             </div>
         </div>
@@ -36,45 +28,6 @@
     {% endif %}
     {%endfor%}
 </div>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos</title>
-</head>
-
-<body>
-    <h1>Productos</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Descripción</th>
-                <th>Cantidad</th>
-                <th>Imagen</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for producto in tabla %}
-            <tr>
-                <td>{{ producto[1] }}</td>
-                <td>{{ producto[2] }}</td>
-                <td>{{ producto[3] }}</td>
-                <td>{{ producto[4] }}</td>
-                <td><img src="{{ url_for('static', filename=producto[5]) }}" alt="Imagen de Producto" height="100"></td>
-                <td><a href="/eliminar/{{ producto[0] }}">Eliminar</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-
-</html>
 
 
 

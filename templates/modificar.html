@@ -76,6 +76,16 @@
             <input type="number" class="form-control" name="cantidad" id="cantidad" required value="{{tabla[4]}}">
         </div>
         <div class="col-md-8 mt-4 mb-4 ">
+            <label for="categoria">categoria:</label>
+            <select class="form-select" aria-label="Default select example" id="categoria" name="categoria">
+                <option selected disabled value="">Seleccionar categoria dale porfa</option>
+                {%for T in categorias%}
+                <option value="{{T[0]}}">{{T[1]}}</option>
+                {%endfor%}
+            </select>
+        </div>
+
+        <div class="col-md-8 mt-4 mb-4 ">
             <label for="formFile" class="form-label">Imagen:</label>
             <input class="form-control" type="file" id="formFile" name="archivo" accept="image/*" value="{{tabla[5]}}">
         </div>

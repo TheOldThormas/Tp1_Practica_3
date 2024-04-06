@@ -105,6 +105,7 @@ def confirmar():
         ubicacionvieja = os.path.join("static", imagen_vieja)
         os.remove(ubicacionvieja)
         imagen.save('static/'+nombre_final)
+    categoria = request.form.get('categoria')
     producto = request.form.get('producto')
     producto = producto.title()
     precio = request.form.get('precio')
@@ -113,7 +114,8 @@ def confirmar():
     cantidad = request.form.get('cantidad')
     try:
         cursor = conexion.connection.cursor()
-        sql = f"UPDATE `imagenes`.`producto` SET `precio_producto` = '{precio}', `nombre_producto` = '{producto}', `descripcion_producto` = '{descripcion}',  `cantidad_producto` = '{cantidad}', `imagen_producto` = '{nombre_final}'  WHERE (`idproducto` = '{id}');"
+        sql = f"UPDATE `imagenes`.`producto` SET `precio_producto` = '{precio}', `nombre_producto` = '{producto}', `descripcion_producto` = '{descripcion}',  `cantidad_producto` = '{cantidad}', `imagen_producto` = '{nombre_final}',`categoria_producto` = '{categoria}' WHERE (`idproducto` = '{id}');"
+
         cursor.execute(sql)
         conexion.connection.commit()
     except Exception as e:

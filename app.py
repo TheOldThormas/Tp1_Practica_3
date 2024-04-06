@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect
 from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
 from datetime import datetime
+import mysql.connector
 import os
 
 app = Flask(__name__)
@@ -12,9 +13,72 @@ app.config['MYSQL_PASSWORD']='123456789'
 app.config['MYSQL_DB']='imagenes'
 conexion=MySQL(app)
 
+class Controlador_pag:
+    def __init__(self):
+        self.pag_actual = 1
+        self.conexion1=mysql.connector.connect(host="localhost",user="julian",password="123456789",database="imagenes")
+        self.cursor=self.conexion1.cursor()
+
+    def ordenar_catalogo(self):
+        try:
+            sql=f"SELECT * FROM producto;" 
+            self.cursor.execute(sql)
+            tabla=self.cursor.fetchall()
+        except Exception as e:
+            print("Error MySQL:", str(e))
+        contador=0
+        db=[]
+        columna=[]
+        for x in tabla:
+            if contador<9:
+                columna.append(x)
+                contador+=1
+            else:
+                db.append(columna)
+                columna=[]
+                columna.append(x)
+                contador=1
+        if columna:
+            db.append(columna)
+        diccionario={}
+        contador=1
+        for x in db:
+            diccionario[contador]=x
+            contador+=1
+        self.paginas=diccionario
+        self.cantidad_paginas=len(diccionario)
+
+    def avanzar(self):
+        limite=len(self.paginas)
+        if self.pag_actual<limite:
+            self.pag_actual+=1
+    
+    def retroceder(self):
+        if self.pag_actual>1:
+            self.pag_actual-=1
+
+paginado=Controlador_pag()
+paginado.ordenar_catalogo()
+
+@app.context_processor
+def cantidad_paginas():
+    datos = {}
+    datos['can_paginas']=paginado.cantidad_paginas
+    return datos
+
 @app.route('/cargar')
 def productos():
     return render_template('formulario.html')
+
+@app.route('/siguiente')
+def siguiente():
+    paginado.avanzar()
+    return redirect('/')
+
+@app.route('/anterior')
+def anterior():
+    paginado.retroceder()
+    return redirect('/')
 
 @app.route('/subir', methods=['POST'])
 def subir_archivo():
@@ -28,7 +92,7 @@ def subir_archivo():
         producto=producto.title()
         precio=request.form.get('precio')
         descripcion=request.form.get('descripcion')
-        descripcion=descripcion.title()
+        descripcion=descripcion.capitalize()
         cantidad=request.form.get('cantidad')
         nombre_archivo=secure_filename(imagen.filename)
         tipo_archivo=nombre_archivo.rsplit('.', 1)[1]
@@ -77,7 +141,7 @@ def confirmar():
     producto=producto.title()
     precio=request.form.get('precio')
     descripcion=request.form.get('descripcion')
-    descripcion=descripcion.title()
+    descripcion=descripcion.capitalize()
     cantidad=request.form.get('cantidad')
     try:
         cursor=conexion.connection.cursor()
@@ -90,14 +154,9 @@ def confirmar():
 
 @app.route("/")
 def imagenes():
-    try:
-        cursor=conexion.connection.cursor()
-        sql="SELECT * FROM producto"
-        cursor.execute(sql)
-        tabla=cursor.fetchall()
-    except Exception as e:
-        print("Error MySQL:", str(e))
-    return render_template('index.html',tabla=tabla)
+    pos=paginado.pag_actual
+    catalogo=paginado.paginas
+    return render_template('index.html',tabla=catalogo[pos])
 
 @app.route("/eliminar", methods=['GET','POST'])
 def eliminar():

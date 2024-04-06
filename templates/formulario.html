@@ -78,6 +78,14 @@
                 placeholder="Ingresa la cantidad de articulos disponibles" required>
         </div>
         <div class="col-md-8 mt-4 mb-4 ">
+            <select class="form-select" aria-label="Default select example" name="categoria">
+                <option selected disabled value="">Seleccionar categoria dale porfa</option>
+                {%for T in categorias%}
+                <option value="{{T[0]}}">{{T[1]}}</option>
+                {%endfor%}
+            </select>
+        </div>
+        <div class="col-md-8 mt-4 mb-4 ">
             <label for="formFile" class="form-label">Imagen:</label>
             <input class="form-control" type="file" id="formFile" name="archivo" accept="image/*" required>
         </div>

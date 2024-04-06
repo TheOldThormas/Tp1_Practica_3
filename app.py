@@ -45,6 +45,7 @@ def subir_archivo():
         descripcion = request.form.get('descripcion')
         descripcion = descripcion.title()
         cantidad = request.form.get('cantidad')
+        categoria = request.form.get('categoria')
         nombre_archivo = secure_filename(imagen.filename)
         tipo_archivo = nombre_archivo.rsplit('.', 1)[1]
         nombre_archivo = nombre_archivo.rsplit('.', 1)[0]
@@ -53,7 +54,8 @@ def subir_archivo():
         imagen.save('static/'+nombre_final)
         try:
             cursor = conexion.connection.cursor()
-            sql = f"INSERT INTO `producto` (`nombre_producto`, `precio_producto`, `descripcion_producto`, `cantidad_producto`, `imagen_producto`) VALUES ('{producto}', '{precio}', '{descripcion}', '{cantidad}', '{nombre_final}');"
+            sql = f"INSERT INTO `producto` (`nombre_producto`, `precio_producto`, `descripcion_producto`, `cantidad_producto`, `imagen_producto`,`categoria_producto`) VALUES ('{producto}', '{precio}', '{descripcion}', '{cantidad}', '{nombre_final}','{categoria}');"
+            print(sql)
             cursor.execute(sql)
             conexion.connection.commit()
         except Exception as e:

@@ -21,9 +21,10 @@ class Controlador_pag:
 
     def ordenar_catalogo(self):
         try:
-            sql=f"SELECT * FROM producto;" 
+            sql=f"SELECT * FROM producto order by nombre_producto;" 
             self.cursor.execute(sql)
             tabla=self.cursor.fetchall()
+            print(f'walter? {len(tabla)}')
         except Exception as e:
             print("Error MySQL:", str(e))
         contador=0
@@ -56,6 +57,11 @@ class Controlador_pag:
     def retroceder(self):
         if self.pag_actual>1:
             self.pag_actual-=1
+    
+    def buscar(self,numero):
+        numero=int(numero)
+        if numero>0 and numero<=self.cantidad_paginas:
+            self.pag_actual=numero
 
 paginado=Controlador_pag()
 paginado.ordenar_catalogo()
@@ -64,6 +70,7 @@ paginado.ordenar_catalogo()
 def cantidad_paginas():
     datos = {}
     datos['can_paginas']=paginado.cantidad_paginas
+    datos['actual']=paginado.pag_actual
     return datos
 
 @app.route('/cargar')
@@ -79,6 +86,12 @@ def siguiente():
 def anterior():
     paginado.retroceder()
     return redirect('/')
+
+@app.route('/numero_pag', methods=['GET'])
+def numero_pag():
+    numero_pag=request.args.get('numero_pagina')
+    paginado.buscar(numero_pag)
+    return redirect("/")
 
 @app.route('/subir', methods=['POST'])
 def subir_archivo():

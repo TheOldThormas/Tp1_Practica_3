@@ -8,20 +8,36 @@
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center mt-4">
         <li class="page-item">
+            {%if 1!=actual%}
             <a class="page-link" href="/anterior" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
+            {%else%}
+            <a class="page-link disabled" href="/anterior" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+            {%endif%}
         </li>
         {%for x in range(1, can_paginas+1)%}
+        {%if actual==x%}
+        <li class="page-item active"><a class="page-link" href="/numero_pag?numero_pagina={{x}}">{{x}}</a></li>
+        {%else%}
         <li class="page-item"><a class="page-link" href="/numero_pag?numero_pagina={{x}}">{{x}}</a></li>
+        {%endif%}
         {%endfor%}
         <li class="page-item">
+            {%if can_paginas!=actual %}
             <a class="page-link" href="/siguiente" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
+            {%else%}
+            <a class="page-link disabled" href="/siguiente" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+            {%endif%}
         </li>
     </ul>
-</nav>
+</nav> 
 <div class="container mt-4">
     {%for x in tabla%}
     {% if loop.index0 % 3 == 0 %}
@@ -46,14 +62,24 @@
     {%endfor%}  
 </div>
 <nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
+    <ul class="pagination justify-content-center mt-4">
         <li class="page-item">
+            {%if 1!=actual%}
             <a class="page-link" href="/anterior" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
+            {%else%}
+            <a class="page-link disabled" href="/anterior" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+            {%endif%}
         </li>
         {%for x in range(1, can_paginas+1)%}
+        {%if actual==x%}
+        <li class="page-item active"><a class="page-link" href="/numero_pag?numero_pagina={{x}}">{{x}}</a></li>
+        {%else%}
         <li class="page-item"><a class="page-link" href="/numero_pag?numero_pagina={{x}}">{{x}}</a></li>
+        {%endif%}
         {%endfor%}
         <li class="page-item">
             {%if can_paginas!=actual %}
@@ -61,12 +87,11 @@
                 <span aria-hidden="true">&raquo;</span>
             </a>
             {%else%}
-            <a class="page-link" href="/siguiente" aria-label="Next" aria-disabled="true">
+            <a class="page-link disabled" href="/siguiente" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>
             {%endif%}
         </li>
-        <h5>{{can_paginas}} {{actual}}</h5>
     </ul>
-</nav>   
+</nav> 
 {% endblock %}

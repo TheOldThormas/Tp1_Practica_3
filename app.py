@@ -24,7 +24,6 @@ class Controlador_pag:
             sql=f"SELECT * FROM producto order by nombre_producto;" 
             self.cursor.execute(sql)
             tabla=self.cursor.fetchall()
-            print(f'walter? {len(tabla)}')
         except Exception as e:
             print("Error MySQL:", str(e))
         contador=0
@@ -80,18 +79,12 @@ def productos():
 @app.route('/siguiente')
 def siguiente():
     paginado.avanzar()
-    return redirect('/')
+    return redirect(f'/pagina/{paginado.pag_actual}')
 
 @app.route('/anterior')
 def anterior():
     paginado.retroceder()
-    return redirect('/')
-
-@app.route('/numero_pag', methods=['GET'])
-def numero_pag():
-    numero_pag=request.args.get('numero_pagina')
-    paginado.buscar(numero_pag)
-    return redirect("/")
+    return redirect(f'/pagina/{paginado.pag_actual}')
 
 @app.route('/subir', methods=['POST'])
 def subir_archivo():
@@ -166,10 +159,11 @@ def confirmar():
     return redirect('/')
 
 @app.route("/")
-def imagenes():
-    pos=paginado.pag_actual
+@app.route("/pagina/<int:numero_pagina>")
+def home(numero_pagina=1):
+    paginado.buscar(numero_pagina)
     catalogo=paginado.paginas
-    return render_template('index.html',tabla=catalogo[pos])
+    return render_template('index.html',tabla=catalogo[numero_pagina])
 
 @app.route("/eliminar", methods=['GET','POST'])
 def eliminar():

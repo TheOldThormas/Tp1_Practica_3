@@ -20,9 +20,9 @@
         </li>
         {%for x in range(1, can_paginas+1)%}
         {%if actual==x%}
-        <li class="page-item active"><a class="page-link" href="/numero_pag?numero_pagina={{x}}">{{x}}</a></li>
+        <li class="page-item active"><a class="page-link" href="/pagina/{{x}}">{{x}}</a></li>
         {%else%}
-        <li class="page-item"><a class="page-link" href="/numero_pag?numero_pagina={{x}}">{{x}}</a></li>
+        <li class="page-item"><a class="page-link" href="/pagina/{{x}}">{{x}}</a></li>
         {%endif%}
         {%endfor%}
         <li class="page-item">
@@ -76,9 +76,9 @@
         </li>
         {%for x in range(1, can_paginas+1)%}
         {%if actual==x%}
-        <li class="page-item active"><a class="page-link" href="/numero_pag?numero_pagina={{x}}">{{x}}</a></li>
+        <li class="page-item active"><a class="page-link" href="/pagina/{{x}}">{{x}}</a></li>
         {%else%}
-        <li class="page-item"><a class="page-link" href="/numero_pag?numero_pagina={{x}}">{{x}}</a></li>
+        <li class="page-item"><a class="page-link" href="/pagina/{{x}}">{{x}}</a></li>
         {%endif%}
         {%endfor%}
         <li class="page-item">

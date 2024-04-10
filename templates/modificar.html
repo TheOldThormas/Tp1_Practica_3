@@ -55,20 +55,31 @@
           <input type="hidden" name="id_producto" value="{{tabla[0]}}">
           <input type="hidden" name="imagen_actual" value="{{tabla[5]}}">
           <label for="producto">Nombre:</label>
-          <input type="text" class="form-control" name="producto" id="producto" required value="{{tabla[1]}}">
+          <input type="text" class="form-control" name="producto" id="producto" required value="{{tabla.producto[1]}}">
       </div>
       <div class="col-md-8 mt-4 mb-4">
           <label for="precio">Precio:</label>
-          <input type="number" class="form-control" name="precio" id="precio" required  value="{{tabla[2]}}">
+          <input type="number" class="form-control" name="precio" id="precio" required  value="{{tabla.producto[2]}}">
       </div>
       <div class="col-md-8 mt-4 mb-4 ">
           <label for="descripcion">Descripcion:</label>
-          <input type="text" class="form-control" name="descripcion" id="descripcion" required  value="{{tabla[3]}}">
+          <input type="text" class="form-control" name="descripcion" id="descripcion" required  value="{{tabla.producto[3]}}">
       </div>
       <div class="col-md-8 mt-4 mb-4 ">
           <label for="cantidad">Cantidad:</label>
-          <input type="number" class="form-control" name="cantidad" id="cantidad" required  value="{{tabla[4]}}">
+          <input type="number" class="form-control" name="cantidad" id="cantidad" required  value="{{tabla.producto[4]}}">
       </div>
+        <div class="col-md-8 mt-4 mb-4">
+            <label for="categoria" class="form-label">Categoria</label>
+            <select class="form-select form-control " id="categoria" name="categoria" required>
+                <option value="{{tabla.categoria[0]}}" >{{tabla.categoria[1]}}</option>
+                {% for x in categorias %}
+                {%if x[0] != tabla.categoria[0]%}
+                <option value="{{x[0]}}">{{x[1]}}</option>
+                {%endif%}
+                {%endfor%}
+            </select>
+        </div>
         <div class="col-md-8 mt-4 mb-4 ">
           <label for="formFile" class="form-label">Imagen:</label>
           <input class="form-control" type="file" id="formFile" name="archivo" accept="image/*" value="{{tabla[5]}}">
@@ -77,7 +88,7 @@
             <div class="row mb-4">
                 <div class="col-md-4 mt-3">
                     <h6>Imagen actual</h6>
-                    <img id="imagen-actual" src="{{ url_for('static', filename=tabla[6]) }}" alt="Imagen actual" style="max-width: 100%; max-height: 300px;">
+                    <img id="imagen-actual" src="{{ url_for('static', filename=tabla.producto[6]) }}" alt="Imagen actual" style="max-width: 100%; max-height: 300px;">
                 </div>
                 <div class="col-md-4 mt-3">
                     <h6>Nueva imagen</h6>

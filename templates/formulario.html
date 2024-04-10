@@ -70,6 +70,15 @@
                 <label for="cantidad">Cantidad:</label>
                 <input type="number" class="form-control" name="cantidad" id="cantidad" placeholder="Ingresa la cantidad de articulos disponibles" required>
             </div>
+            <div class="col-md-8 mt-4 mb-4">
+                <label for="categoria" class="form-label">Categoria</label>
+                <select class="form-select form-control " id="categoria" name="categoria" required>
+                    <option value="" selected disabled>-Seleccionar-</option>
+                    {% for x in categorias %}
+                    <option value="{{x[0]}}">{{x[1]}}</option>
+                    {%endfor%}
+                </select>
+            </div>
             <div class="col-md-8 mt-4 mb-4 ">
                 <label for="formFile" class="form-label">Imagen:</label>
                 <input class="form-control" type="file" id="formFile" name="archivo" accept="image/*" required>

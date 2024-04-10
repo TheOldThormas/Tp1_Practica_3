@@ -16,14 +16,15 @@ conexion=MySQL(app)
 class Controlador_pag:
     def __init__(self):
         self.pag_actual = 1
-        self.conexion1=mysql.connector.connect(host="localhost",user="julian",password="123456789",database="imagenes")
-        self.cursor=self.conexion1.cursor()
 
     def ordenar_catalogo(self):
         try:
+            self.conexion1=mysql.connector.connect(host="localhost",user="julian",password="123456789",database="imagenes")
+            self.cursor=self.conexion1.cursor()
             sql=f"SELECT * FROM producto order by nombre_producto;" 
             self.cursor.execute(sql)
             tabla=self.cursor.fetchall()
+            self.cursor.close()
         except Exception as e:
             print("Error MySQL:", str(e))
         contador=0
@@ -50,26 +51,39 @@ class Controlador_pag:
 
     def avanzar(self):
         limite=len(self.paginas)
+        paginado.ordenar_catalogo()
         if self.pag_actual<limite:
             self.pag_actual+=1
     
     def retroceder(self):
+        paginado.ordenar_catalogo()
         if self.pag_actual>1:
             self.pag_actual-=1
     
     def buscar(self,numero):
+        paginado.ordenar_catalogo()
         numero=int(numero)
         if numero>0 and numero<=self.cantidad_paginas:
             self.pag_actual=numero
+        else:
+            self.pag_actual=1
 
 paginado=Controlador_pag()
 paginado.ordenar_catalogo()
 
 @app.context_processor
-def cantidad_paginas():
+def variables_jinja():
     datos = {}
     datos['can_paginas']=paginado.cantidad_paginas
     datos['actual']=paginado.pag_actual
+    try:
+        cursor = conexion.connection.cursor()
+        sql = "SELECT * FROM categoria" 
+        cursor.execute(sql)
+        tabla = cursor.fetchall()
+        datos["categorias"] = tabla 
+    except Exception as e:
+        print("Error MySQL:", str(e))
     return datos
 
 @app.route('/cargar')
@@ -100,6 +114,7 @@ def subir_archivo():
         descripcion=request.form.get('descripcion')
         descripcion=descripcion.capitalize()
         cantidad=request.form.get('cantidad')
+        categoria=request.form.get('categoria')
         nombre_archivo=secure_filename(imagen.filename)
         tipo_archivo=nombre_archivo.rsplit('.', 1)[1]
         nombre_archivo=nombre_archivo.rsplit('.', 1)[0]
@@ -108,7 +123,8 @@ def subir_archivo():
         imagen.save('static/'+nombre_final)
         try:
             cursor=conexion.connection.cursor()
-            sql=f"INSERT INTO `producto` (`nombre_producto`, `precio_producto`, `descripcion_producto`, `cantidad_producto`, `imagen_producto`) VALUES ('{producto}', '{precio}', '{descripcion}', '{cantidad}', '{nombre_final}');"
+            sql=f"INSERT INTO `producto` (`nombre_producto`, `precio_producto`, `descripcion_producto`, `cantidad_producto`, `categoria_producto`, `imagen_producto`) VALUES ('{producto}', '{precio}', '{descripcion}', '{cantidad}', '{categoria}','{nombre_final}');"
+            print(sql)
             cursor.execute(sql)
             conexion.connection.commit()
         except Exception as e:
@@ -118,11 +134,15 @@ def subir_archivo():
 @app.route('/modificar', methods=['GET','POST'])
 def modificar():
     id_producto=request.args.get('id_producto')
+    tabla={}
     try:
         cursor=conexion.connection.cursor()
         sql=f"SELECT * FROM producto where idproducto = {id_producto}" 
         cursor.execute(sql)
-        tabla=cursor.fetchone()
+        tabla['producto']=cursor.fetchone()
+        sql=f"SELECT * FROM categoria where id_categoria = {tabla['producto'][5]}" 
+        cursor.execute(sql)
+        tabla['categoria']=cursor.fetchone()
     except Exception as e:
         print("Error MySQL:", str(e))
     return render_template('modificar.html', tabla=tabla)
@@ -149,9 +169,10 @@ def confirmar():
     descripcion=request.form.get('descripcion')
     descripcion=descripcion.capitalize()
     cantidad=request.form.get('cantidad')
+    categoria=request.form.get('categoria')
     try:
         cursor=conexion.connection.cursor()
-        sql=f"UPDATE `imagenes`.`producto` SET `precio_producto` = '{precio}', `nombre_producto` = '{producto}', `descripcion_producto` = '{descripcion}',  `cantidad_producto` = '{cantidad}', `imagen_producto` = '{nombre_final}'  WHERE (`idproducto` = '{id}');"
+        sql=f"UPDATE `imagenes`.`producto` SET `precio_producto` = '{precio}', `nombre_producto` = '{producto}', `descripcion_producto` = '{descripcion}',  `cantidad_producto` = '{cantidad}', `imagen_producto` = '{nombre_final}', `categoria_producto` = '{categoria}' WHERE (`idproducto` = '{id}');"
         cursor.execute(sql)
         conexion.connection.commit()
     except Exception as e:
@@ -161,10 +182,14 @@ def confirmar():
 @app.route("/")
 @app.route("/pagina/<int:numero_pagina>")
 def home(numero_pagina=1):
+    paginado.ordenar_catalogo()
     paginado.buscar(numero_pagina)
     catalogo=paginado.paginas
-    return render_template('index.html',tabla=catalogo[numero_pagina])
-
+    if numero_pagina in catalogo:
+        return render_template('index.html',tabla=catalogo[numero_pagina])
+    else:
+        return render_template('index.html',tabla=catalogo[1])
+    
 @app.route("/eliminar", methods=['GET','POST'])
 def eliminar():
     id_producto=request.args.get('id_producto')
@@ -177,6 +202,7 @@ def eliminar():
     cursor.execute(sql)
     conexion.connection.commit()
     os.remove(os.path.join('static', nombre_imagen))
+    paginado.ordenar_catalogo()
     return redirect('/')
 
 if __name__ == '__main__':

@@ -204,6 +204,6 @@ def eliminar():
     os.remove(os.path.join('static', nombre_imagen))
     paginado.ordenar_catalogo()
     return redirect('/')
-
+   
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

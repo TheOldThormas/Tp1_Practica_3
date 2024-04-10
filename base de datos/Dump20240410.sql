@@ -53,8 +53,11 @@ CREATE TABLE `producto` (
   `descripcion_producto` varchar(200) DEFAULT NULL,
   `cantidad_producto` int DEFAULT NULL,
   `imagen_producto` varchar(200) NOT NULL,
-  PRIMARY KEY (`idproducto`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb3;
+  `categoria_producto` int DEFAULT NULL,
+  PRIMARY KEY (`idproducto`),
+  KEY `categoriaproducto_idx` (`categoria_producto`),
+  CONSTRAINT `categoriaproducto` FOREIGN KEY (`categoria_producto`) REFERENCES `categoria` (`id_categoria`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,7 +66,7 @@ CREATE TABLE `producto` (
 
 LOCK TABLES `producto` WRITE;
 /*!40000 ALTER TABLE `producto` DISABLE KEYS */;
-INSERT INTO `producto` VALUES (29,'Pc Master ',5000,'La Pc Del Siglo',1,'la_pc20240403211759.png');
+INSERT INTO `producto` VALUES (29,'Pc Master ',5000,'La Pc Del Siglo',1,'la_pc20240403211759.png',1),(32,'Pc Alienware',2000,'La Pc Del Año Pasado',3,'alienware20240406202001.png',2);
 /*!40000 ALTER TABLE `producto` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -76,4 +79,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-05 21:30:59
+-- Dump completed on 2024-04-10 20:35:39

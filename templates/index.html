@@ -22,7 +22,7 @@
                 <option value="{{ fila[0] }}">{{ fila[1] }}</option>
                 {% endfor %}
             </select>
-            <form class="d-flex" role="search">
+            <form class="d-flex" action="/buscar" method="GET" role="search">
                 <input class="form-control form-control-sm me-2" type="search" placeholder="Producto" aria-label="Search" style="width: 400px;" name="buscar"> <!-- Modificado: Establecer un ancho personalizado -->
                 <button class="btn btn-outline-success" type="submit">Buscar</button>
             </form>

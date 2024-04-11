@@ -8,21 +8,22 @@ import os
 app = Flask(__name__)
 
 app.config['MYSQL_HOST']='localhost'
-app.config['MYSQL_USER']='root'
-app.config['MYSQL_PASSWORD']='AltaEsaBaseDeDatos'
+app.config['MYSQL_USER']='julian'
+app.config['MYSQL_PASSWORD']='123456789'
 app.config['MYSQL_DB']='imagenes'
 conexion=MySQL(app)
 
 class Controlador_pag:
     def __init__(self):
         self.pag_actual = 1
+        self.sql=f"SELECT * FROM producto order by nombre_producto;"
 
-    def ordenar_catalogo(self, sql):
+    def ordenar_catalogo(self):
         try:
-            self.conexion1=mysql.connector.connect(host="localhost",user="root",password="AltaEsaBaseDeDatos",database="imagenes")
+            self.conexion1=mysql.connector.connect(host="localhost",user="julian",password="123456789",database="imagenes")
             self.cursor=self.conexion1.cursor()
-
-            self.cursor.execute(sql)
+            self.cursor.execute(self.sql)
+            print(self.sql)
             tabla=self.cursor.fetchall()
             self.cursor.close()
         except Exception as e:
@@ -51,20 +52,17 @@ class Controlador_pag:
 
     def avanzar(self):
         limite=len(self.paginas)
-        sql=f"SELECT * FROM producto order by nombre_producto;"
-        paginado.ordenar_catalogo(sql)
+        paginado.ordenar_catalogo()
         if self.pag_actual<limite:
             self.pag_actual+=1
     
     def retroceder(self):
-        sql=f"SELECT * FROM producto order by nombre_producto;"
-        paginado.ordenar_catalogo(sql)
+        paginado.ordenar_catalogo()
         if self.pag_actual>1:
             self.pag_actual-=1
     
     def buscar(self,numero):
-        sql=f"SELECT * FROM producto order by nombre_producto;"
-        paginado.ordenar_catalogo(sql)
+        paginado.ordenar_catalogo()
         numero=int(numero)
         if numero>0 and numero<=self.cantidad_paginas:
             self.pag_actual=numero
@@ -72,8 +70,7 @@ class Controlador_pag:
             self.pag_actual=1
 
 paginado=Controlador_pag()
-sql=f"SELECT * FROM producto order by nombre_producto;"
-paginado.ordenar_catalogo(sql)
+paginado.ordenar_catalogo()
 
 @app.context_processor
 def variables_jinja():
@@ -94,11 +91,12 @@ def variables_jinja():
 @app.route('/buscar', methods=['GET'])
 def buscar():
     # capta lo que se ponga en el formulario
-    buscar = request.form.get("buscar")
-    sql =f'SELECT * FROM producto where nombre_producto like '%{buscar}%';'
-    paginado.ordenar_catalogo(sql)
+    buscar = request.args.get("buscar")
+    query=f"SELECT * FROM producto where nombre_producto like '%{buscar}%';"
+    paginado.sql=query
+    paginado.ordenar_catalogo()
     catalogo = paginado.paginas
-    return render_template('index.html', tabla=catalogo[1] )
+    return render_template('index.html', tabla=catalogo[1] ) #revisar el paginado cuando tengamos 200 productos
 
 @app.route('/cargar')
 def productos():
@@ -196,8 +194,9 @@ def confirmar():
 @app.route("/")
 @app.route("/pagina/<int:numero_pagina>")
 def home(numero_pagina=1):
-    sql=f"SELECT * FROM producto order by nombre_producto;"
-    paginado.ordenar_catalogo(sql)
+    query=f"SELECT * FROM producto order by nombre_producto;"
+    paginado.sql=query
+    paginado.ordenar_catalogo()
     paginado.buscar(numero_pagina)
     catalogo=paginado.paginas
     if numero_pagina in catalogo:
@@ -217,7 +216,7 @@ def eliminar():
     cursor.execute(sql)
     conexion.connection.commit()
     os.remove(os.path.join('static', nombre_imagen))
-    paginado.ordenar_catalogo(sql)
+    paginado.ordenar_catalogo()
     return redirect('/')
    
 if __name__ == '__main__':

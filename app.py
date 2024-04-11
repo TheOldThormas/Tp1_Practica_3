@@ -8,11 +8,10 @@ import os
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'ibA_pX2V5Z-#3:4Tcs'
+app.config['MYSQL_USER'] = 'julian'
+app.config['MYSQL_PASSWORD'] = '123456789'
 app.config['MYSQL_DB'] = 'imagenes'
 conexion = MySQL(app)
-
 
 class Controlador_pag:
     def __init__(self):
@@ -22,7 +21,7 @@ class Controlador_pag:
     def ordenar_catalogo(self):
         try:
             self.conexion1 = mysql.connector.connect(
-                host="localhost", user="root", password="ibA_pX2V5Z-#3:4Tcs", database="imagenes")
+                host="localhost", user="julian", password="123456789", database="imagenes")
             self.cursor = self.conexion1.cursor()
             self.cursor.execute(self.sql)
             tabla = self.cursor.fetchall()
@@ -33,7 +32,7 @@ class Controlador_pag:
         db = []
         columna = []
         for x in tabla:
-            if contador < 6:
+            if contador < 3:
                 columna.append(x)
                 contador += 1
             else:
@@ -70,10 +69,8 @@ class Controlador_pag:
         else:
             self.pag_actual = 1
 
-
 paginado = Controlador_pag()
 paginado.ordenar_catalogo()
-
 
 @app.context_processor
 def variables_jinja():
@@ -82,14 +79,13 @@ def variables_jinja():
     datos['actual'] = paginado.pag_actual
     try:
         cursor = conexion.connection.cursor()
-        sql = "SELECT * FROM categoria"
+        sql = "SELECT * FROM categoria order by tipo;"
         cursor.execute(sql)
         tabla = cursor.fetchall()
         datos["categorias"] = tabla
     except Exception as e:
         print("Error MySQL:", str(e))
     return datos
-
 
 @app.route('/buscar', methods=['GET'])
 def buscar():
@@ -102,23 +98,19 @@ def buscar():
     # revisar el paginado cuando tengamos 200 productos
     return render_template('index.html', tabla=catalogo[1])
 
-
 @app.route('/cargar')
 def productos():
     return render_template('formulario.html')
-
 
 @app.route('/siguiente')
 def siguiente():
     paginado.avanzar()
     return redirect(f'/pagina/{paginado.pag_actual}')
 
-
 @app.route('/anterior')
 def anterior():
     paginado.retroceder()
     return redirect(f'/pagina/{paginado.pag_actual}')
-
 
 @app.route('/subir', methods=['POST'])
 def subir_archivo():
@@ -150,7 +142,6 @@ def subir_archivo():
             print("Error MySQL:", str(e))
         return redirect('/')
 
-
 @app.route('/modificar', methods=['GET', 'POST'])
 def modificar():
     id_producto = request.args.get('id_producto')
@@ -166,7 +157,6 @@ def modificar():
     except Exception as e:
         print("Error MySQL:", str(e))
     return render_template('modificar.html', tabla=tabla)
-
 
 @app.route('/confirmar', methods=['POST'])
 def confirmar():
@@ -200,7 +190,6 @@ def confirmar():
         print("Error MySQL:", str(e))
     return redirect('/')
 
-
 @app.route("/")
 @app.route("/pagina/<int:numero_pagina>")
 def home(numero_pagina=1):
@@ -213,7 +202,6 @@ def home(numero_pagina=1):
         return render_template('index.html', tabla=catalogo[numero_pagina])
     else:
         return render_template('index.html', tabla=catalogo[1])
-
 
 @app.route("/eliminar", methods=['GET', 'POST'])
 def eliminar():
@@ -230,7 +218,6 @@ def eliminar():
     paginado.ordenar_catalogo()
     return redirect('/')
 
-
 @app.route('/categorias', methods=['GET', 'POST'])
 def categorias():
     categorias = request.args.get('id')
@@ -241,7 +228,6 @@ def categorias():
 
     return render_template('index.html', tabla=catalogo[1])
     # revisar cuando tengamos 200 productos
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

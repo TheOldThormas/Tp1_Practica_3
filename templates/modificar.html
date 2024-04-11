@@ -2,32 +2,37 @@
 {%block title%}Modificar producto nuevo{%endblock%}
 {% block head %}
 <style>
-
-    h2 { 
-        text-align: center; /* Centra el texto */
-        padding: 10px 20px; /* Agrega espacio en los bordes */
-        border-radius: 8px; /* Bordes redondeados */
-        background-color: #f4f4f4; /* Color de fondo grisaseo */
-        color: #4d4a4a; /* Color del texto */
-        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1); /* Sombra */
+    h2 {
+        text-align: center;
+        /* Centra el texto */
+        padding: 10px 20px;
+        /* Agrega espacio en los bordes */
+        border-radius: 8px;
+        /* Bordes redondeados */
+        background-color: #f4f4f4;
+        /* Color de fondo grisaseo */
+        color: #4d4a4a;
+        /* Color del texto */
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        /* Sombra */
     }
 
     input[type="submit"] {
-      width: auto;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+        width: auto;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
     }
 
     input[type="submit"]:hover {
-      background-color: hsl(211, 100%, 35%);
+        background-color: hsl(211, 100%, 35%);
     }
 
-    div{
+    div {
 
         background-color: #f4f4f4;
         margin: 0;
@@ -43,36 +48,38 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
     }
-
-    </style>
+</style>
 {% endblock %}
 {%block body%}
 <script src="{{ url_for('static', filename='js/foto.js') }}"></script>
-<h1>Modificar {{tabla[1]}}</h1>
+<h1>Modificar {{tabla.producto[1]}}</h1>
 <div class="container mt-4">
-  <form action="/confirmar" method="post" enctype="multipart/form-data">
-      <div class="col-md-8 mt-4 mb-4 ">
-          <input type="hidden" name="id_producto" value="{{tabla[0]}}">
-          <input type="hidden" name="imagen_actual" value="{{tabla[5]}}">
-          <label for="producto">Nombre:</label>
-          <input type="text" class="form-control" name="producto" id="producto" required value="{{tabla.producto[1]}}">
-      </div>
-      <div class="col-md-8 mt-4 mb-4">
-          <label for="precio">Precio:</label>
-          <input type="number" class="form-control" name="precio" id="precio" required  value="{{tabla.producto[2]}}">
-      </div>
-      <div class="col-md-8 mt-4 mb-4 ">
-          <label for="descripcion">Descripcion:</label>
-          <input type="text" class="form-control" name="descripcion" id="descripcion" required  value="{{tabla.producto[3]}}">
-      </div>
-      <div class="col-md-8 mt-4 mb-4 ">
-          <label for="cantidad">Cantidad:</label>
-          <input type="number" class="form-control" name="cantidad" id="cantidad" required  value="{{tabla.producto[4]}}">
-      </div>
+    <form action="/confirmar" method="post" enctype="multipart/form-data">
+        <div class="col-md-8 mt-4 mb-4 ">
+            <input type="hidden" name="id_producto" value="{{tabla.producto[0]}}">
+            <input type="hidden" name="imagen_actual" value="{{tabla.producto[6]}}">
+            <label for="producto">Nombre:</label>
+            <input type="text" class="form-control" name="producto" id="producto" required
+                value="{{tabla.producto[1]}}">
+        </div>
+        <div class="col-md-8 mt-4 mb-4">
+            <label for="precio">Precio:</label>
+            <input type="number" class="form-control" name="precio" id="precio" required value="{{tabla.producto[2]}}">
+        </div>
+        <div class="col-md-8 mt-4 mb-4 ">
+            <label for="descripcion">Descripcion:</label>
+            <input type="text" class="form-control" name="descripcion" id="descripcion" required
+                value="{{tabla.producto[3]}}">
+        </div>
+        <div class="col-md-8 mt-4 mb-4 ">
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" class="form-control" name="cantidad" id="cantidad" required
+                value="{{tabla.producto[4]}}">
+        </div>
         <div class="col-md-8 mt-4 mb-4">
             <label for="categoria" class="form-label">Categoria</label>
             <select class="form-select form-control " id="categoria" name="categoria" required>
-                <option value="{{tabla.categoria[0]}}" >{{tabla.categoria[1]}}</option>
+                <option value="{{tabla.categoria[0]}}">{{tabla.categoria[1]}}</option>
                 {% for x in categorias %}
                 {%if x[0] != tabla.categoria[0]%}
                 <option value="{{x[0]}}">{{x[1]}}</option>
@@ -81,26 +88,28 @@
             </select>
         </div>
         <div class="col-md-8 mt-4 mb-4 ">
-          <label for="formFile" class="form-label">Imagen:</label>
-          <input class="form-control" type="file" id="formFile" name="archivo" accept="image/*" value="{{tabla[5]}}">
+            <label for="formFile" class="form-label">Imagen:</label>
+            <input class="form-control" type="file" id="formFile" name="archivo" accept="image/*" value="{{tabla[5]}}">
         </div>
         <div class="container mt-4">
             <div class="row mb-4">
                 <div class="col-md-4 mt-3">
                     <h6>Imagen actual</h6>
-                    <img id="imagen-actual" src="{{ url_for('static', filename=tabla.producto[6]) }}" alt="Imagen actual" style="max-width: 100%; max-height: 300px;">
+                    <img id="imagen-actual" src="{{ url_for('static', filename=tabla.producto[6]) }}"
+                        alt="Imagen actual" style="max-width: 100%; max-height: 300px;">
                 </div>
                 <div class="col-md-4 mt-3">
                     <h6>Nueva imagen</h6>
-                    <img id="preview-image" src="#" alt="Vista previa de la imagen" style="display: none; max-width: 100%; max-height: 300px;">
+                    <img id="preview-image" src="#" alt="Vista previa de la imagen"
+                        style="display: none; max-width: 100%; max-height: 300px;">
                 </div>
             </div>
-        </div>       
-      <div>
-          <button type="submit" class="btn btn-primary col-md-2 mt-4 mb-4">
-              Confirmar
-          </button>
-      </div>
-  </form>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary col-md-2 mt-4 mb-4">
+                Confirmar
+            </button>
+        </div>
+    </form>
 </div>
 {%endblock%}

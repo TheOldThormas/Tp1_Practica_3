@@ -5,6 +5,17 @@
     <h1 class="display-4">Productos</h1>
     <a href="/cargar" class="btn btn-success mx-2"><i class="bi bi-plus-lg"></i>Nuevo producto</a>
 </div>
+
+<div class="container text-center mt-4">
+    <select class="form-select" aria-label="Default select example">
+        <option selected>selecionar categoria</option>
+        {%for fila in categorias%}
+        <option value="{{fila[0]}}">{{fila[1]}}</option>
+        {%endfor%}
+    </select>
+</div>
+
+
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center mt-4">
         <li class="page-item">

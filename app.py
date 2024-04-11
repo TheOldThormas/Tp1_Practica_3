@@ -8,8 +8,8 @@ import os
 app = Flask(__name__)
 
 app.config['MYSQL_HOST']='localhost'
-app.config['MYSQL_USER']='julian'
-app.config['MYSQL_PASSWORD']='123456789'
+app.config['MYSQL_USER']='root'
+app.config['MYSQL_PASSWORD']='AltaEsaBaseDeDatos'
 app.config['MYSQL_DB']='imagenes'
 conexion=MySQL(app)
 
@@ -19,7 +19,7 @@ class Controlador_pag:
 
     def ordenar_catalogo(self):
         try:
-            self.conexion1=mysql.connector.connect(host="localhost",user="julian",password="123456789",database="imagenes")
+            self.conexion1=mysql.connector.connect(host="localhost",user="root",password="AltaEsaBaseDeDatos",database="imagenes")
             self.cursor=self.conexion1.cursor()
             sql=f"SELECT * FROM producto order by nombre_producto;" 
             self.cursor.execute(sql)
@@ -82,6 +82,19 @@ def variables_jinja():
         cursor.execute(sql)
         tabla = cursor.fetchall()
         datos["categorias"] = tabla 
+    except Exception as e:
+        print("Error MySQL:", str(e))
+    return datos
+
+@app.context_processor
+def categoria():
+    datos = {}
+    try:
+        cursor = conexion.connection.cursor()
+        sql = "SELECT * FROM categoria"  # esto es del SQL
+        cursor.execute(sql)
+        tabla = cursor.fetchall()
+        datos["categorias"] = tabla  # ginga
     except Exception as e:
         print("Error MySQL:", str(e))
     return datos

@@ -1,20 +1,41 @@
 {% extends './layout.html' %}
 {% block title %}Catalogo de productos{% endblock %}
 {% block body %}
+
+<style>
+    body {
+        background-color: rgb(234, 247, 247);
+    }
+</style>
+
 <div class="container text-center mt-4">
     <h1 class="display-4">Productos</h1>
     <a href="/cargar" class="btn btn-success mx-2"><i class="bi bi-plus-lg"></i>Nuevo producto</a>
 </div>
 
-<div class="container text-center mt-4">
-    <select class="form-select" aria-label="Default select example">
-        <option selected>selecionar categoria</option>
-        {%for fila in categorias%}
-        <option value="{{fila[0]}}">{{fila[1]}}</option>
-        {%endfor%}
-    </select>
-</div>
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid justify-content-center">
+        <div class="d-flex align-items-center">
+            <select class="form-select me-2" id="categoria" name="categoria">
+                <option selected>Seleccionar categoría</option>
+                {% for fila in categorias %}
+                <option value="{{ fila[0] }}">{{ fila[1] }}</option>
+                {% endfor %}
+            </select>
+            <form class="d-flex" role="search">
+                <input class="form-control form-control-sm me-2" type="search" placeholder="Producto" aria-label="Search" style="width: 400px;" name="buscar"> <!-- Modificado: Establecer un ancho personalizado -->
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </form>
+        </div>
+    </div>
+</nav>
 
+
+<!-- SELECT () FROM (TABLA) WHERE () LIKE ‘%’; 
+paginado -->
+
+
+<!-- SELECT () FROM (TABLA) WHERE () LIKE ‘%’; -->
 
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center mt-4">

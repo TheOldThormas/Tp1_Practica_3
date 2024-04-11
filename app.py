@@ -17,11 +17,11 @@ class Controlador_pag:
     def __init__(self):
         self.pag_actual = 1
 
-    def ordenar_catalogo(self):
+    def ordenar_catalogo(self, sql):
         try:
             self.conexion1=mysql.connector.connect(host="localhost",user="root",password="AltaEsaBaseDeDatos",database="imagenes")
             self.cursor=self.conexion1.cursor()
-            sql=f"SELECT * FROM producto order by nombre_producto;" 
+
             self.cursor.execute(sql)
             tabla=self.cursor.fetchall()
             self.cursor.close()
@@ -51,17 +51,20 @@ class Controlador_pag:
 
     def avanzar(self):
         limite=len(self.paginas)
-        paginado.ordenar_catalogo()
+        sql=f"SELECT * FROM producto order by nombre_producto;"
+        paginado.ordenar_catalogo(sql)
         if self.pag_actual<limite:
             self.pag_actual+=1
     
     def retroceder(self):
-        paginado.ordenar_catalogo()
+        sql=f"SELECT * FROM producto order by nombre_producto;"
+        paginado.ordenar_catalogo(sql)
         if self.pag_actual>1:
             self.pag_actual-=1
     
     def buscar(self,numero):
-        paginado.ordenar_catalogo()
+        sql=f"SELECT * FROM producto order by nombre_producto;"
+        paginado.ordenar_catalogo(sql)
         numero=int(numero)
         if numero>0 and numero<=self.cantidad_paginas:
             self.pag_actual=numero
@@ -69,7 +72,8 @@ class Controlador_pag:
             self.pag_actual=1
 
 paginado=Controlador_pag()
-paginado.ordenar_catalogo()
+sql=f"SELECT * FROM producto order by nombre_producto;"
+paginado.ordenar_catalogo(sql)
 
 @app.context_processor
 def variables_jinja():
@@ -86,18 +90,15 @@ def variables_jinja():
         print("Error MySQL:", str(e))
     return datos
 
-@app.context_processor
-def categoria():
-    datos = {}
-    try:
-        cursor = conexion.connection.cursor()
-        sql = "SELECT * FROM categoria"  # esto es del SQL
-        cursor.execute(sql)
-        tabla = cursor.fetchall()
-        datos["categorias"] = tabla  # ginga
-    except Exception as e:
-        print("Error MySQL:", str(e))
-    return datos
+
+@app.route('/buscar', methods=['GET'])
+def buscar():
+    # capta lo que se ponga en el formulario
+    buscar = request.form.get("buscar")
+    sql =f'SELECT * FROM producto where nombre_producto like '%{buscar}%';'
+    paginado.ordenar_catalogo(sql)
+    catalogo = paginado.paginas
+    return render_template('index.html', tabla=catalogo[1] )
 
 @app.route('/cargar')
 def productos():
@@ -195,7 +196,8 @@ def confirmar():
 @app.route("/")
 @app.route("/pagina/<int:numero_pagina>")
 def home(numero_pagina=1):
-    paginado.ordenar_catalogo()
+    sql=f"SELECT * FROM producto order by nombre_producto;"
+    paginado.ordenar_catalogo(sql)
     paginado.buscar(numero_pagina)
     catalogo=paginado.paginas
     if numero_pagina in catalogo:
@@ -215,7 +217,7 @@ def eliminar():
     cursor.execute(sql)
     conexion.connection.commit()
     os.remove(os.path.join('static', nombre_imagen))
-    paginado.ordenar_catalogo()
+    paginado.ordenar_catalogo(sql)
     return redirect('/')
    
 if __name__ == '__main__':

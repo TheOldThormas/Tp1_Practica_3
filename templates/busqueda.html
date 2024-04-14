@@ -1,5 +1,5 @@
 {% extends './layout.html' %}
-{% block title %}Catalogo de productos{% endblock %}
+{% block title %}{{buscar}}{% endblock %}
 {% block body %}
 
 <style>
@@ -7,24 +7,18 @@
         background-color: rgb(234, 247, 247);
     }
 </style>
-
-<div class="container text-center mt-4">
-    <h1 class="display-4">Productos</h1>
-    <a href="/cargar" class="btn btn-success mx-2"><i class="bi bi-plus-lg"></i>Nuevo producto</a>
-</div>
-
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center mt-4">
         {% if pagina > 1 %}
-        <li class="page-item"><a class="page-link" href="{{url_for('home',pagina=pagina-1)}}">Anterior</a></li>
+        <li class="page-item"><a class="page-link" href="{{url_for('buscar',pagina=pagina-1,buscar=buscar)}}">Anterior</a></li>
         {% endif %}
         {% set primer_pag = pagina - 3 if pagina > 3 else 1 %}
         {% set final_pag = pagina + 3 if pagina < total_paginas - 3 else total_paginas %}
         {% for x in range(primer_pag, final_pag + 1) %}
-        <li class="page-item {% if x == pagina %}active{% endif %}"><a class="page-link" href="{{url_for('home',pagina=x)}}">{{ x }}</a></li>
+        <li class="page-item {% if x == pagina %}active{% endif %}"><a class="page-link" href="{{url_for('buscar',pagina=x,buscar=buscar)}}">{{ x }}</a></li>
         {% endfor %}
         {% if pagina < total_paginas %}
-        <li class="page-item"><a class="page-link" href="{{url_for('home',pagina=pagina+1)}}">Siguiente</a></li>
+        <li class="page-item"><a class="page-link" href="{{url_for('buscar',pagina=pagina+1,buscar=buscar)}}">Siguiente</a></li>
         {% endif %}
     </ul>
 </nav>
@@ -62,15 +56,15 @@
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center mt-4">
         {% if pagina > 1 %}
-        <li class="page-item"><a class="page-link" href="{{url_for('home',pagina=pagina-1)}}">Anterior</a></li>
+        <li class="page-item"><a class="page-link" href="{{url_for('buscar',pagina=pagina-1,buscar=buscar)}}">Anterior</a></li>
         {% endif %}
         {% set primer_pag = pagina - 3 if pagina > 3 else 1 %}
         {% set final_pag = pagina + 3 if pagina < total_paginas - 3 else total_paginas %}
         {% for x in range(primer_pag, final_pag + 1) %}
-        <li class="page-item {% if x == pagina %}active{% endif %}"><a class="page-link" href="{{url_for('home',pagina=x)}}">{{ x }}</a></li>
+        <li class="page-item {% if x == pagina %}active{% endif %}"><a class="page-link" href="{{url_for('buscar',pagina=x,buscar=buscar)}}">{{ x }}</a></li>
         {% endfor %}
         {% if pagina < total_paginas %}
-        <li class="page-item"><a class="page-link" href="{{url_for('home',pagina=pagina+1)}}">Siguiente</a></li>
+        <li class="page-item"><a class="page-link" href="{{url_for('buscar',pagina=pagina+1,buscar=buscar)}}">Siguiente</a></li>
         {% endif %}
     </ul>
 </nav>

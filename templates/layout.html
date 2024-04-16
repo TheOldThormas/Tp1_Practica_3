@@ -19,7 +19,7 @@
                     <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         Categorias
-                    </a>
+                    </a> <!---->
                     <ul class="dropdown-menu">
                         {%for note in categorias%}
                         <li><a class="dropdown-item" href="{{url_for('filtro_categoria',pagina=1,categoria=note[1],id=note[0])}}">{{note[1]}}</a></li>

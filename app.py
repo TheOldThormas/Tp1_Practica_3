@@ -42,7 +42,7 @@ def buscar(pagina=1):
         total_articulos = cursor.fetchone()[0]
         total_paginas = (total_articulos + cantidad - 1) // cantidad
         print(total_paginas)
-        if pagina>total_paginas:
+        if pagina>total_paginas: #
             return redirect(f'/{total_paginas}')
     except Exception as e:
         print("Error MySQL:", str(e))

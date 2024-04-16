@@ -12,6 +12,7 @@ app.config['MYSQL_PASSWORD'] = '123456789'
 app.config['MYSQL_DB'] = 'imagenes'
 conexion = MySQL(app)
 
+
 @app.context_processor
 def variables_jinja():
     datos = {}
@@ -25,6 +26,7 @@ def variables_jinja():
         print("Error MySQL:", str(e))
     return datos
 
+
 @app.route('/buscar', methods=['GET'])
 @app.route('/buscar/<int:pagina>', methods=['GET'])
 def buscar(pagina=1):
@@ -37,20 +39,27 @@ def buscar(pagina=1):
         sql = f"SELECT * FROM producto where nombre_producto like '%{buscar}%' LIMIT {cantidad} OFFSET {salto};"
         cursor.execute(sql)
         articulos = cursor.fetchall()
-        sql=f"SELECT COUNT(*) FROM producto where nombre_producto like '%{buscar}%';"
+        sql = f"SELECT COUNT(*) FROM producto where nombre_producto like '%{buscar}%';"
         cursor.execute(sql)
         total_articulos = cursor.fetchone()[0]
         total_paginas = (total_articulos + cantidad - 1) // cantidad
         print(total_paginas)
-        if pagina>total_paginas: #
+        if pagina > total_paginas:
             return redirect(f'/{total_paginas}')
     except Exception as e:
         print("Error MySQL:", str(e))
-    return render_template('busqueda.html',articulos=articulos,buscar=buscar, total_paginas=total_paginas, pagina=pagina)
+    return render_template('busqueda.html', articulos=articulos, buscar=buscar, total_paginas=total_paginas, pagina=pagina)
+
 
 @app.route('/cargar')
 def productos():
     return render_template('formulario.html')
+
+
+@app.route('/cata_categorias')
+def cata_categorias():
+    return render_template('catalogo_categorias.html')
+
 
 @app.route('/subir', methods=['POST'])
 def subir_archivo():
@@ -82,6 +91,7 @@ def subir_archivo():
             print("Error MySQL:", str(e))
         return redirect('/')
 
+
 @app.route('/modificar', methods=['GET', 'POST'])
 def modificar():
     id_producto = request.args.get('id_producto')
@@ -97,6 +107,7 @@ def modificar():
     except Exception as e:
         print("Error MySQL:", str(e))
     return render_template('modificar.html', tabla=tabla)
+
 
 @app.route('/confirmar', methods=['POST'])
 def confirmar():
@@ -130,6 +141,7 @@ def confirmar():
         print("Error MySQL:", str(e))
     return redirect('/')
 
+
 @app.route("/")
 @app.route("/pagina/<int:pagina>")
 def home(pagina=1):
@@ -143,12 +155,13 @@ def home(pagina=1):
         cursor.execute("SELECT COUNT(*) FROM producto;")
         total_articulos = cursor.fetchone()[0]
         total_paginas = (total_articulos + cantidad - 1) // cantidad
-        if pagina>total_paginas:
+        if pagina > total_paginas:
             return redirect(f'/{total_paginas}')
     except Exception as e:
         print("Error MySQL:", str(e))
     return render_template('index.html', articulos=articulos, total_paginas=total_paginas, pagina=pagina)
-    
+
+
 @app.route("/eliminar", methods=['GET', 'POST'])
 def eliminar():
     id_producto = request.args.get('id_producto')
@@ -163,8 +176,9 @@ def eliminar():
     os.remove(os.path.join('static', nombre_imagen))
     return redirect('/')
 
-@app.route('/<categoria>/id<int:id>/<int:pagina>',methods=['GET', 'POST'])
-def filtro_categoria(pagina=1,categoria=None,id=1):
+
+@app.route('/<categoria>/id<int:id>/<int:pagina>', methods=['GET', 'POST'])
+def filtro_categoria(pagina=1, categoria=None, id=1):
     try:
         cursor = conexion.connection.cursor()
         cantidad = 6
@@ -172,11 +186,11 @@ def filtro_categoria(pagina=1,categoria=None,id=1):
         sql = f"SELECT * FROM producto  where categoria_producto={id} LIMIT {cantidad} OFFSET {salto};"
         cursor.execute(sql)
         articulos = cursor.fetchall()
-        sql=f"SELECT COUNT(*) FROM producto where categoria_producto={id};"
+        sql = f"SELECT COUNT(*) FROM producto where categoria_producto={id};"
         cursor.execute(sql)
         total_articulos = cursor.fetchone()[0]
         total_paginas = (total_articulos + cantidad - 1) // cantidad
-        if pagina>total_paginas:
+        if pagina > total_paginas:
             return redirect(f'/{total_paginas}')
     except Exception as e:
         print("Error MySQL:", str(e))

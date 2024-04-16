@@ -1,10 +1,14 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
+from flask_session import Session
 from flask_mysqldb import MySQL
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
 
 app = Flask(__name__)
+app.config['SECRET_KEY']='12345'
+app.config['SESSION_TYPE']='filesystem'
+Session(app)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'julian'
@@ -26,6 +30,34 @@ def variables_jinja():
         print("Error MySQL:", str(e))
     return datos
 
+@app.route('/iniciar_sesion')
+def iniciar_sesion():
+    return render_template('login.html')
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    usuario=request.form.get('usuario')
+    password=request.form.get('passw')
+    try:
+        cursor = conexion.connection.cursor()
+        sql = f"SELECT * FROM usuario where nombre_usuario='{usuario}';"
+        cursor.execute(sql)
+        tabla = cursor.fetchone()
+    except Exception as e:
+        print("Error MySQL:", str(e))
+    if tabla:
+        if password in tabla:
+            session['username']=usuario
+            session['conectado']=True
+            return redirect('/')
+        else:
+            return redirect('/iniciar_sesion')
+        
+@app.route('/cerrar')
+def cerrar():
+    session.pop('username', None)
+    session.pop('conectado', None)
+    return redirect('/iniciar_sesion')
 
 @app.route('/buscar', methods=['GET'])
 @app.route('/buscar/<int:pagina>', methods=['GET'])
@@ -58,7 +90,10 @@ def productos():
 
 @app.route('/cata_categorias')
 def cata_categorias():
-    return render_template('catalogo_categorias.html')
+    if 'conectado' in session:
+        return render_template('catalogo_categorias.html')
+    else:
+        return redirect('/iniciar_sesion')
 
 
 @app.route('/subir', methods=['POST'])

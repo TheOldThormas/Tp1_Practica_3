@@ -73,6 +73,10 @@ def cerrar():
     session.pop('conectado', None)
     return redirect('/')
 
+@app.route('/nuevo_usuario')
+def nuevo_usuario():
+    return render_template('nuevo_usuario.html')
+
 @app.route('/buscar', methods=['GET'])
 @app.route('/buscar/<int:pagina>', methods=['GET'])
 def buscar(pagina=1):

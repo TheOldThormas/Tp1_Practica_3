@@ -7,8 +7,8 @@ import os
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'julian'
-app.config['MYSQL_PASSWORD'] = '123456789'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'AltaEsaBaseDeDatos'
 app.config['MYSQL_DB'] = 'imagenes'
 conexion = MySQL(app)
 

@@ -10,9 +10,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY']='12345'
 app.config['SESSION_TYPE']='filesystem'
 Session(app)
-app.config['SECRET_KEY']='12345'
-app.config['SESSION_TYPE']='filesystem'
-Session(app)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'julian'

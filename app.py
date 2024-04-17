@@ -29,7 +29,10 @@ def variables_jinja():
         datos["categorias"] = tabla
     except Exception as e:
         print("Error MySQL:", str(e))
-    datos["sesion"] = session['conectado']
+    try:
+        datos["sesion"] = session['conectado']
+    except Exception as e:
+        print("Todavia no hay nadie logueado, el try es para que no tire error")
     return datos
 
 

@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, flash
 from flask_mysqldb import MySQL
 from flask_session import Session
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash
 from datetime import datetime
 import os
 
@@ -11,8 +12,8 @@ app.config['SESSION_TYPE']='filesystem'
 Session(app)
 
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'AltaEsaBaseDeDatos'
+app.config['MYSQL_USER'] = 'julian'
+app.config['MYSQL_PASSWORD'] = '123456789'
 app.config['MYSQL_DB'] = 'imagenes'
 conexion = MySQL(app)
 
@@ -29,6 +30,10 @@ def variables_jinja():
         datos["sesion"]=session["conectado"]
     except Exception as e:
         print("Error MySQL:", str(e))
+    try:
+        datos["sesion"] = session['conectado']
+    except Exception as e:
+        print("Todavia no hay nadie logueado, el try es para que no tire error")
     return datos
 
 
@@ -39,8 +44,10 @@ def inicio_sesion():
 @app.route('/login', methods=['GET','POST'])
 def login():
     usuario=request.form.get('usuario')
-    print(usuario)
     password=request.form.get('passw')
+    hashed_password = generate_password_hash(password)
+    print(password)
+    print(hashed_password)
     try:
         cursor = conexion.connection.cursor()
         sql = f"SELECT * FROM usuario where nombre_usuario='{usuario}';"
@@ -49,13 +56,20 @@ def login():
         tabla = cursor.fetchone()
     except Exception as e:
         print("Error MySQL:", str(e))
+        flash("NO EXISTE EL USUARIO")
+        return render_template("inicio_sesion.html")
     if tabla:
-        if password in tabla:
-            session['username']=usuario
-            session['conectado']=True
+        if password == tabla[2]:
+            session['username'] = usuario
+            session['conectado'] = True
+            flash("Inicio de sesión exitoso")
             return redirect('/')
         else:
+            flash("Contraseña incorrecta","error")
             return redirect('/inicio_sesion')
+    else:
+        flash("Usuario no encontrado")
+        return redirect('/inicio_sesion')
 
 @app.route('/cerrar')
 def cerrar():

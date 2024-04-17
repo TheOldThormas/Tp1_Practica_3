@@ -6,6 +6,16 @@
 <br>
 <div class="container text-center mt-4">
   <form action="/login" method="POST">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for message in messages %}
+                {% set category, message_content = message if message|length == 2 else (None, message) %}
+                <div class="{{ category }}">
+                    {{ message_content }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <div class="row  mx-auto d-flex justify-content-center align-items-center">
       <div class="col-md-3">
         <!-- el for del label es para posicionarse arriba del input que tiene el id del mismo nombre -->

@@ -26,7 +26,11 @@
                         aria-label="Search" style="width: 400px;" name="buscar" required>
                     <button class="btn btn-outline-success me-4" type="submit">Buscar</button>
                 </form>
+                {%if sesion%}
+                <a href="/cerrar" class="btn btn-success me-2">Cerrar sesion</a>
+                {%else%}
                 <a href="/inicio_sesion" class="btn btn-success me-2">Iniciar sesión</a>
+                {%endif%}
             </div>
         </div>
     </nav>

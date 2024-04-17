@@ -26,6 +26,7 @@ def variables_jinja():
         cursor.execute(sql)
         tabla = cursor.fetchall()
         datos["categorias"] = tabla
+        datos["sesion"]=session["conectado"]
     except Exception as e:
         print("Error MySQL:", str(e))
     return datos
@@ -60,7 +61,11 @@ def login():
 def cerrar():
     session.pop('username', None)
     session.pop('conectado', None)
-    return redirect('/inicio_sesion')
+    return redirect('/')
+
+@app.route('/nuevo_usuario')
+def nuevo_usuario():
+    return render_template('nuevo_usuario.html')
 
 @app.route('/buscar', methods=['GET'])
 @app.route('/buscar/<int:pagina>', methods=['GET'])

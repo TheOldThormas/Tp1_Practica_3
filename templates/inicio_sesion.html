@@ -1,0 +1,31 @@
+{% extends './layout_sesion.html' %}
+{% block tittle %}probando{% endblock %}
+{% block body %}
+<br>
+<br>
+<br>
+<div class="container text-center mt-4">
+  <form action="/login" method="POST">
+    <div class="row  mx-auto d-flex justify-content-center align-items-center">
+      <div class="col-md-3">
+        <!-- el for del label es para posicionarse arriba del input que tiene el id del mismo nombre -->
+        <label for="nombre_usuario" class="form-label">Nombre de usuario:</label> 
+        <input type="text" class="form-control" id="nombre_usuario" name="usuario" required>
+        <label for="passw" class="form-label">Contraseña:</label>
+        <input type="password" class="form-control" id="passw" name="passw" required>
+      </div>
+    </div>
+    <div class="row mt-4 mx-auto d-flex justify-content-center align-items-center">
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary">Iniciar sesion</button>
+      </div>
+    </div>
+  </form>
+  <div class="row mt-4 mx-auto d-flex justify-content-center align-items-center" >
+    <div class="col-md-3">
+      <label for="crear_cuenta" class="form-label">¿No tenes una sesion?</label> 
+      <a class="btn btn-outline-secondary" href="/registro" id="crear_cuenta">Crear cuenta</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

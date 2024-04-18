@@ -30,7 +30,10 @@ def variables_jinja():
     except Exception as e:
         print("Error MySQL:", str(e))
     try:
+        datos['usuario'] = session['username']
+        datos['id_usuario'] = session['id_usuario']
         datos["sesion"] = session['conectado']
+        print(datos)
     except Exception as e:
         print("Todavia no hay nadie logueado, el try es para que no tire error")
     return datos
@@ -85,16 +88,13 @@ def registro_usuario():
     nombre_usuario=request.form.get('nombre_usuario')
     passw=request.form.get('passw')
     passw2=request.form.get('re_passw')
-    print("ACA?")
     try:
         cursor = conexion.connection.cursor()
         sql = "SELECT nombre_usuario FROM usuario;"
         cursor.execute(sql)
         tabla = cursor.fetchone()
-        print("ACA2?")
         if tabla[0]==nombre_usuario:
             flash("El nombre de usuario ya esta registrado")
-            print("ACA3?")
             return redirect('/nuevo_usuario')
         else:
             if passw==passw2:
@@ -102,15 +102,33 @@ def registro_usuario():
                 sql = f"INSERT INTO `imagenes`.`usuario` (`nombre_per`, `apellido_per`, `nombre_usuario`, `pass_usuario`) VALUES ('{nombre}', '{apellido}', '{nombre_usuario}', '{passw}');"
                 cursor.execute(sql)
                 conexion.connection.commit() #Actualiza la base de datos para que se vea el nuevo insert
+                session['id_usuario'] = cursor.lastrowid
                 session['username'] = nombre_usuario
                 session['conectado'] = True #En este if hay que comparar los roles en el futuro
-                # Agregar la id aca con el lastrow creo que era (problemas a futuro)
             else:
                 flash("LAS CONTRASEÑAS NO COINCIDEN")
                 return redirect('/nuevo_usuario')
     except Exception as e:
         print("Error MySQL:", str(e))
     return redirect('/')
+
+@app.route('/datos_usuario')
+def datos_usuario():
+    if 'conectado' in session:
+        try:
+            cursor = conexion.connection.cursor()
+            sql = f"SELECT * FROM usuario where idusuario={session['id_usuario']}"
+            cursor.execute(sql)
+            tabla = cursor.fetchone()
+        except Exception as e:
+            print("Error MySQL:", str(e))
+        return render_template('/usuario.html',tabla=tabla)
+    else:
+        return redirect('/inicio_sesion')
+    
+@app.route('/actualizar_usuario')
+def actualizar_usuario():
+    pass
 
 @app.route('/buscar', methods=['GET'])
 @app.route('/buscar/<int:pagina>', methods=['GET'])

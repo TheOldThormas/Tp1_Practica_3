@@ -10,7 +10,9 @@
 
 <div class="container text-center mt-4">
     <h1 class="display-4">Productos</h1>
+    {%if rol==1%}
     <a href="/cargar" class="btn btn-success mx-2"><i class="bi bi-plus-lg"></i>Nuevo producto</a>
+    {%endif%}
 </div>
 {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -56,10 +58,12 @@
                     <h3><small class="text-body-secondary">Descripcion: </small>{{x[3]}}</h3>
                     <div class="mt-auto">
                         <hr class="my-1">
+                        {%if rol==1%}
                         <div class="d-flex justify-content-between align-items-center">
                             <a href="/eliminar?id_producto={{x[0]}}" class="btn btn-danger mx-2">Eliminar</a>
                             <a href="/modificar?id_producto={{x[0]}}" class="btn btn-warning mx-2">Modificar</a>
                         </div>
+                        {%endif%}
                     </div>
 
                 </div>

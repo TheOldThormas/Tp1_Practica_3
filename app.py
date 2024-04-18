@@ -54,8 +54,6 @@ def login():
         tabla = cursor.fetchone()
     except Exception as e:
         print("Error MySQL:", str(e))
-        flash("NO EXISTE EL USUARIO")
-        return render_template("inicio_sesion.html")
     if tabla:
         if check_password_hash(tabla[4], password):
             session['username'] = usuario
@@ -63,14 +61,14 @@ def login():
             session['id_usuario'] = tabla[0]
             session['passw']=tabla[4]
             session['rol']=tabla[5]
-            flash("Inicio de sesión exitoso")
-            return redirect('/')
+            flash(f'Bienvenido {usuario}!','success')
+            return redirect("/")
         else:
-            flash("Contraseña incorrecta","error")
-            return redirect('/inicio_sesion')
+            flash("La contraseña es incorrecta","danger")
+            return render_template("inicio_sesion.html",usuario=usuario)
     else:
-        flash("Usuario no encontrado")
-        return redirect('/inicio_sesion')
+        flash(f'El usuario "{usuario}" no existe','danger')
+        return render_template("inicio_sesion.html")
 
 @app.route('/cerrar')
 def cerrar():
@@ -95,12 +93,12 @@ def registro_usuario():
     passw2=request.form.get('re_passw')
     try:
         cursor = conexion.connection.cursor()
-        sql = "SELECT nombre_usuario FROM usuario;"
+        sql = f"SELECT nombre_usuario FROM usuario where nombre_usuario='{nombre_usuario}';"
         cursor.execute(sql)
         tabla = cursor.fetchone()
-        if tabla[0]==nombre_usuario:
-            flash("El nombre de usuario ya esta registrado")
-            return redirect('/nuevo_usuario')
+        if tabla:
+            flash(f'El nombre de usuario: "{nombre_usuario}" ya esta en uso','warning')
+            return render_template('nuevo_usuario.html',nombre=nombre,apellido=apellido,passw=passw,passw2=passw2)
         else:
             if passw==passw2:
                 passw=generate_password_hash(passw)
@@ -116,10 +114,11 @@ def registro_usuario():
                 tabla = cursor.fetchone()
                 session['rol']=tabla[0]
             else:
-                flash("LAS CONTRASEÑAS NO COINCIDEN") #Revisar los flash en html
-                return redirect('/nuevo_usuario')
+                flash("Las contraseñas no coinciden","danger")
+                return render_template('nuevo_usuario.html',nombre=nombre,apellido=apellido,nombre_usuario=nombre_usuario)
     except Exception as e:
         print("Error MySQL:", str(e))
+    flash(f'Cuenta creada con exito, bienvenido: "{nombre_usuario}"','success')
     return redirect('/')
 
 @app.route('/validar_usuario')
@@ -142,7 +141,7 @@ def datos_usuario():
                     print("Error MySQL:", str(e))
                 return render_template('/usuario.html',tabla=tabla)
             else:
-                flash("La contraseña es incorrecta")
+                flash("La contraseña es incorrecta",'danger')
                 return redirect('/validar_usuario')
         else:
             try:

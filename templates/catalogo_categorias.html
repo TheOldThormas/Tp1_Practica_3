@@ -1,16 +1,15 @@
 {% extends './layout.html' %}
 {% block title %}Catalogo de productos{% endblock %}
 {% block body %}
-<div class="container text-center">
+<div class="container text-center mt-4">
     {%for note in categorias%}
     {%if loop.index0 %3 ==0 %}
-    <div class="row">
+    <div class="row mb-4 d-flex justify-content-center align-items-center">
         {%endif%}
         <div class="col-sm-3 mb-3 mb-sm-0">
             <div class="card">
                 <div class="card-body">
-                    <a class="btn btn-primary"
-                        href="{{url_for('filtro_categoria',pagina=1,categoria=note[1],id=note[0])}}">{{note[1]}}</a>
+                    <a href="{{url_for('filtro_categoria',pagina=1,categoria=note[1],id=note[0])}}" type="button" class="btn" >{{note[1]}}</a>
                 </div>
             </div>
         </div>

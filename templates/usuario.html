@@ -4,6 +4,7 @@
 <br>
 <br>
 <div class="container text-center mt-4">
+  <h2>Actualizar informacion de usuario</h2>
   <form action="/actualizar_usuario" method="POST"> <!-- Action es lo mismo que href pero manda todo el contenido del formulario -->
     <div class="row  mx-auto d-flex justify-content-center align-items-center">
       <div class="col-md-3">
@@ -14,26 +15,26 @@
         <label for="apellido" class="form-label">Apellido</label>
         <input type="text" class="form-control" id="apellido" name="apellido" value="{{tabla[2]}}" required>
       </div>
-    </div>
-
-    <div class="row  mx-auto d-flex justify-content-center align-items-center">
-        <div class="col-md-3">
-        <label for="registrar_usuario" class="form-label">Ingrese nombre de usuario</label>
+      <div class="row  mx-auto d-flex justify-content-center align-items-center">
+      <div class="col-md-6 mt-2">
+        <label for="registrar_usuario" class="form-label">Nombre de usuario</label>
         <input type="text" class="form-control" id="registrar_usuario" name="nombre_usuario" value="{{tabla[3]}}" required>
+      </div>
+      </div>
+      <div class="row  mx-auto d-flex justify-content-center align-items-center">
+      <div class="col-md-3 mt-2">
         <label for="passw" class="form-label">Nueva contraseña (opcional)</label>
-        <input type="text" class="form-control" id="passw" name="passw" >
+        <input type="text" class="form-control" id="passw" name="passw">
+      </div>
+      <div class="col-md-3 mt-2">
         <label for="re_passw" class="form-label">Repetir nueva contraseña</label>
         <input type="text" class="form-control" id="re_passw" name="re_passw">
+      </div>
     </div>
-
-    {% if re_passw != passw %}
-    no coinciden las contraseñas
-    {% endif %}
-
-
+  </div>
     <div class="row mt-4 mx-auto d-flex justify-content-center align-items-center">
-        <div class="col-12">
-            <button type="submit" class="btn btn-primary">Registrarse</button>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Confirmar cambios</button>
       </div>
     </div>
   </form>

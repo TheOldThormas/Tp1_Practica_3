@@ -6,17 +6,18 @@
 <br>
 <div class="container text-center mt-4">
   <form action="/datos_usuario" method="POST">
-    <div class="row  mx-auto d-flex justify-content-center align-items-center">
-      <div class="col-md-3">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <h2>{{ message }}</h2> 
-                <!-- Hacerlo mas bello -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{category}}" role="alert">
+              <h2>Error: {{message}}</h2>
+            </div>
             {% endfor %}
-        {% endif %}
+          {% endif %}
         {% endwith %}
         <h5>{{usuario}}</h5>
+    <div class="row  mx-auto d-flex justify-content-center align-items-center">
+      <div class="col-md-3">
         <label for="passw" class="form-label">Contraseña:</label>
         <input type="password" class="form-control" id="passw" name="passw" required>
       </div>

@@ -4,7 +4,7 @@
 <br>
 <br>
 <div class="container text-center mt-4">
-  <form action="/proceso_registro" method="POST">
+  <form action="/registro_usuario" method="POST"> <!-- Action es lo mismo que href pero manda todo el contenido del formulario -->
     <div class="row  mx-auto d-flex justify-content-center align-items-center">
       <div class="col-md-3">
         <label for="nombre" class="form-label">Nombre</label>
@@ -19,7 +19,7 @@
     <div class="row  mx-auto d-flex justify-content-center align-items-center">
         <div class="col-md-3">
         <label for="registrar_usuario" class="form-label">Ingrese nombre de usuario</label>
-        <input type="text" class="form-control" id="registrar_usuario" name="registrar_usuario" required>
+        <input type="text" class="form-control" id="registrar_usuario" name="nombre_usuario" required>
         <label for="passw" class="form-label">Ingrese una contraseña</label>
         <input type="text" class="form-control" id="passw" name="passw" required>
         <label for="re_passw" class="form-label">Repetir contraseña</label>

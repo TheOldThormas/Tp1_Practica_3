@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_mysqldb import MySQL
 from flask_session import Session
 from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
 
@@ -44,9 +44,6 @@ def inicio_sesion():
 def login():
     usuario=request.form.get('usuario')
     password=request.form.get('passw')
-    hashed_password = generate_password_hash(password)
-    print(password)
-    print(hashed_password)
     try:
         cursor = conexion.connection.cursor()
         sql = f"SELECT * FROM usuario where nombre_usuario='{usuario}';"
@@ -58,9 +55,10 @@ def login():
         flash("NO EXISTE EL USUARIO")
         return render_template("inicio_sesion.html")
     if tabla:
-        if password == tabla[2]:
+        if check_password_hash(tabla[4], password):
             session['username'] = usuario
             session['conectado'] = True
+            session['id_usuario'] = tabla[0]
             flash("Inicio de sesión exitoso")
             return redirect('/')
         else:
@@ -79,6 +77,40 @@ def cerrar():
 @app.route('/nuevo_usuario')
 def nuevo_usuario():
     return render_template('nuevo_usuario.html')
+
+@app.route('/registro_usuario', methods=['GET' ,'POST'])
+def registro_usuario():
+    nombre=request.form.get('nombre')
+    apellido=request.form.get('apellido')
+    nombre_usuario=request.form.get('nombre_usuario')
+    passw=request.form.get('passw')
+    passw2=request.form.get('re_passw')
+    print("ACA?")
+    try:
+        cursor = conexion.connection.cursor()
+        sql = "SELECT nombre_usuario FROM usuario;"
+        cursor.execute(sql)
+        tabla = cursor.fetchone()
+        print("ACA2?")
+        if tabla[0]==nombre_usuario:
+            flash("El nombre de usuario ya esta registrado")
+            print("ACA3?")
+            return redirect('/nuevo_usuario')
+        else:
+            if passw==passw2:
+                passw=generate_password_hash(passw)
+                sql = f"INSERT INTO `imagenes`.`usuario` (`nombre_per`, `apellido_per`, `nombre_usuario`, `pass_usuario`) VALUES ('{nombre}', '{apellido}', '{nombre_usuario}', '{passw}');"
+                cursor.execute(sql)
+                conexion.connection.commit() #Actualiza la base de datos para que se vea el nuevo insert
+                session['username'] = nombre_usuario
+                session['conectado'] = True #En este if hay que comparar los roles en el futuro
+                # Agregar la id aca con el lastrow creo que era (problemas a futuro)
+            else:
+                flash("LAS CONTRASEÑAS NO COINCIDEN")
+                return redirect('/nuevo_usuario')
+    except Exception as e:
+        print("Error MySQL:", str(e))
+    return redirect('/')
 
 @app.route('/buscar', methods=['GET'])
 @app.route('/buscar/<int:pagina>', methods=['GET'])

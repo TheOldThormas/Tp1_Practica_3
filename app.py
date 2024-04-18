@@ -33,6 +33,7 @@ def variables_jinja():
         datos['usuario'] = session['username']
         datos['id_usuario'] = session['id_usuario']
         datos["sesion"] = session['conectado']
+        datos["rol"] = session['rol']
     except Exception as e:
         print("Todavia no hay nadie logueado, el try es para que no tire error")
     return datos
@@ -50,7 +51,6 @@ def login():
         cursor = conexion.connection.cursor()
         sql = f"SELECT * FROM usuario where nombre_usuario='{usuario}';"
         cursor.execute(sql)
-        print(sql)
         tabla = cursor.fetchone()
     except Exception as e:
         print("Error MySQL:", str(e))
@@ -62,6 +62,7 @@ def login():
             session['conectado'] = True
             session['id_usuario'] = tabla[0]
             session['passw']=tabla[4]
+            session['rol']=tabla[5]
             flash("Inicio de sesión exitoso")
             return redirect('/')
         else:
@@ -75,6 +76,10 @@ def login():
 def cerrar():
     session.pop('username', None)
     session.pop('conectado', None)
+    session.pop('id_usuario', None)
+    session.pop('validacion', None)
+    session.pop('rol', None)
+    session.pop('passw', None)
     return redirect('/') #redirecciona a una ruta dentro del archivo python
 
 @app.route('/nuevo_usuario')
@@ -99,13 +104,17 @@ def registro_usuario():
         else:
             if passw==passw2:
                 passw=generate_password_hash(passw)
-                sql = f"INSERT INTO `imagenes`.`usuario` (`nombre_per`, `apellido_per`, `nombre_usuario`, `pass_usuario`) VALUES ('{nombre}', '{apellido}', '{nombre_usuario}', '{passw}');"
+                sql = f"INSERT INTO `imagenes`.`usuario` (`nombre_per`, `apellido_per`, `nombre_usuario`, `pass_usuario`, `rol`) VALUES ('{nombre}', '{apellido}', '{nombre_usuario}', '{passw}', '2');"
                 cursor.execute(sql)
                 conexion.connection.commit() #Actualiza la base de datos para que se vea el nuevo insert
                 session['id_usuario'] = cursor.lastrowid
                 session['username'] = nombre_usuario
                 session['conectado'] = True #En este if hay que comparar los roles en el futuro
                 session['passw'] = passw
+                sql = f"SELECT rol FROM usuario where id_usuario={session['id_usuario']};"
+                cursor.execute(sql)
+                tabla = cursor.fetchone()
+                session['rol']=tabla[0]
             else:
                 flash("LAS CONTRASEÑAS NO COINCIDEN")
                 return redirect('/nuevo_usuario')
@@ -196,7 +205,7 @@ def buscar(pagina=1):
         cursor.execute(sql)
         total_articulos = cursor.fetchone()[0]
         total_paginas = (total_articulos + cantidad - 1) // cantidad
-        print(total_paginas)
+        print(total_paginas) #Revisar con los productos no encontrados
         if pagina > total_paginas:
             return redirect(f'/{total_paginas}')
     except Exception as e:
@@ -206,25 +215,87 @@ def buscar(pagina=1):
 
 @app.route('/cargar')
 def productos():
-    return render_template('formulario.html')
+    if 'conectado' in session and session['rol']==1:
+        return render_template('formulario.html')
+    else:
+        return redirect ("/")
 
 
 @app.route('/cata_categorias')
 def cata_categorias():
-    if 'conectado' in session:
-        return render_template('catalogo_categorias.html')
-    else:
-        return redirect('/inicio_sesion')
+    return render_template('catalogo_categorias.html')
 
 
 @app.route('/subir', methods=['POST'])
 def subir_archivo():
-    if 'archivo' not in request.files:
-        return 'ningún archivo'
-    imagen = request.files['archivo']
-    if imagen.filename == '':
-        return 'ningún archivo'
-    if imagen:
+    if 'conectado' in session and session['rol']==1:
+        if 'archivo' not in request.files:
+            return 'ningún archivo'
+        imagen = request.files['archivo']
+        if imagen.filename == '':
+            return 'ningún archivo'
+        if imagen:
+            producto = request.form.get('producto')
+            producto = producto.title()
+            precio = request.form.get('precio')
+            descripcion = request.form.get('descripcion')
+            descripcion = descripcion.capitalize()
+            cantidad = request.form.get('cantidad')
+            categoria = request.form.get('categoria')
+            nombre_archivo = secure_filename(imagen.filename)
+            tipo_archivo = nombre_archivo.rsplit('.', 1)[1]
+            nombre_archivo = nombre_archivo.rsplit('.', 1)[0]
+            nombre_modificado = f"{datetime.now().strftime('%Y%m%d%H%M%S')}.{tipo_archivo}"
+            nombre_final = nombre_archivo+nombre_modificado
+            imagen.save('static/'+nombre_final)
+            try:
+                cursor = conexion.connection.cursor()
+                sql = f"INSERT INTO `producto` (`nombre_producto`, `precio_producto`, `descripcion_producto`, `cantidad_producto`, `categoria_producto`, `imagen_producto`) VALUES ('{producto}', '{precio}', '{descripcion}', '{cantidad}', '{categoria}','{nombre_final}');"
+                cursor.execute(sql)
+                conexion.connection.commit()
+            except Exception as e:
+                print("Error MySQL:", str(e))
+            return redirect('/')
+        else:
+            return redirect("/")
+
+
+@app.route('/modificar', methods=['GET', 'POST'])
+def modificar():
+    if 'conectado' in session and session['rol']==1:
+        id_producto = request.args.get('id_producto')
+        tabla = {}
+        try:
+            cursor = conexion.connection.cursor()
+            sql = f"SELECT * FROM producto where idproducto = {id_producto}"
+            cursor.execute(sql)
+            tabla['producto'] = cursor.fetchone()
+            sql = f"SELECT * FROM categoria where id_categoria = {tabla['producto'][5]}"
+            cursor.execute(sql)
+            tabla['categoria'] = cursor.fetchone()
+        except Exception as e:
+            print("Error MySQL:", str(e))
+        return render_template('modificar.html', tabla=tabla)
+    else:
+        return redirect("/")
+
+@app.route('/confirmar', methods=['POST'])
+def confirmar():
+    if 'conectado' in session and session['rol']==1:
+        id = request.form.get('id_producto')
+        imagen = request.files['archivo']
+        if imagen.filename == '':
+            nombre_final = request.form.get('imagen_actual')
+        else:
+            nombre_archivo = secure_filename(imagen.filename)
+            tipo_archivo = nombre_archivo.rsplit('.', 1)[1]
+            nombre_archivo = nombre_archivo.rsplit('.', 1)[0]
+            nombre_modificado = f"{datetime.now().strftime('%Y%m%d%H%M%S')}.{tipo_archivo}"
+            nombre_final = nombre_archivo+nombre_modificado
+            imagen_vieja = request.form.get('imagen_actual')
+            ubicacionvieja = os.path.join("static", imagen_vieja)
+            os.remove(ubicacionvieja)
+            imagen.save('static/'+nombre_final)
         producto = request.form.get('producto')
         producto = producto.title()
         precio = request.form.get('precio')
@@ -232,70 +303,16 @@ def subir_archivo():
         descripcion = descripcion.capitalize()
         cantidad = request.form.get('cantidad')
         categoria = request.form.get('categoria')
-        nombre_archivo = secure_filename(imagen.filename)
-        tipo_archivo = nombre_archivo.rsplit('.', 1)[1]
-        nombre_archivo = nombre_archivo.rsplit('.', 1)[0]
-        nombre_modificado = f"{datetime.now().strftime('%Y%m%d%H%M%S')}.{tipo_archivo}"
-        nombre_final = nombre_archivo+nombre_modificado
-        imagen.save('static/'+nombre_final)
         try:
             cursor = conexion.connection.cursor()
-            sql = f"INSERT INTO `producto` (`nombre_producto`, `precio_producto`, `descripcion_producto`, `cantidad_producto`, `categoria_producto`, `imagen_producto`) VALUES ('{producto}', '{precio}', '{descripcion}', '{cantidad}', '{categoria}','{nombre_final}');"
+            sql = f"UPDATE `imagenes`.`producto` SET `precio_producto` = '{precio}', `nombre_producto` = '{producto}', `descripcion_producto` = '{descripcion}',  `cantidad_producto` = '{cantidad}', `imagen_producto` = '{nombre_final}', `categoria_producto` = '{categoria}' WHERE (`idproducto` = '{id}');"
             cursor.execute(sql)
             conexion.connection.commit()
         except Exception as e:
             print("Error MySQL:", str(e))
         return redirect('/')
-
-
-@app.route('/modificar', methods=['GET', 'POST'])
-def modificar():
-    id_producto = request.args.get('id_producto')
-    tabla = {}
-    try:
-        cursor = conexion.connection.cursor()
-        sql = f"SELECT * FROM producto where idproducto = {id_producto}"
-        cursor.execute(sql)
-        tabla['producto'] = cursor.fetchone()
-        sql = f"SELECT * FROM categoria where id_categoria = {tabla['producto'][5]}"
-        cursor.execute(sql)
-        tabla['categoria'] = cursor.fetchone()
-    except Exception as e:
-        print("Error MySQL:", str(e))
-    return render_template('modificar.html', tabla=tabla)
-
-
-@app.route('/confirmar', methods=['POST'])
-def confirmar():
-    id = request.form.get('id_producto')
-    imagen = request.files['archivo']
-    if imagen.filename == '':
-        nombre_final = request.form.get('imagen_actual')
     else:
-        nombre_archivo = secure_filename(imagen.filename)
-        tipo_archivo = nombre_archivo.rsplit('.', 1)[1]
-        nombre_archivo = nombre_archivo.rsplit('.', 1)[0]
-        nombre_modificado = f"{datetime.now().strftime('%Y%m%d%H%M%S')}.{tipo_archivo}"
-        nombre_final = nombre_archivo+nombre_modificado
-        imagen_vieja = request.form.get('imagen_actual')
-        ubicacionvieja = os.path.join("static", imagen_vieja)
-        os.remove(ubicacionvieja)
-        imagen.save('static/'+nombre_final)
-    producto = request.form.get('producto')
-    producto = producto.title()
-    precio = request.form.get('precio')
-    descripcion = request.form.get('descripcion')
-    descripcion = descripcion.capitalize()
-    cantidad = request.form.get('cantidad')
-    categoria = request.form.get('categoria')
-    try:
-        cursor = conexion.connection.cursor()
-        sql = f"UPDATE `imagenes`.`producto` SET `precio_producto` = '{precio}', `nombre_producto` = '{producto}', `descripcion_producto` = '{descripcion}',  `cantidad_producto` = '{cantidad}', `imagen_producto` = '{nombre_final}', `categoria_producto` = '{categoria}' WHERE (`idproducto` = '{id}');"
-        cursor.execute(sql)
-        conexion.connection.commit()
-    except Exception as e:
-        print("Error MySQL:", str(e))
-    return redirect('/')
+        return redirect("/")
 
 
 @app.route("/")
@@ -320,16 +337,18 @@ def home(pagina=1):
 
 @app.route("/eliminar", methods=['GET', 'POST'])
 def eliminar():
-    id_producto = request.args.get('id_producto')
-    cursor = conexion.connection.cursor()
-    sql = f"SELECT imagen_producto FROM producto WHERE idproducto = {id_producto}"
-    cursor.execute(sql)
-    resultado = cursor.fetchone()
-    nombre_imagen = resultado[0]
-    sql = f"DELETE FROM producto WHERE idproducto = {id_producto}"
-    cursor.execute(sql)
-    conexion.connection.commit()
-    os.remove(os.path.join('static', nombre_imagen))
+    if 'conectado' in session and session['rol']==1:
+        id_producto = request.args.get('id_producto')
+        cursor = conexion.connection.cursor()
+        sql = f"SELECT imagen_producto FROM producto WHERE idproducto = {id_producto}"
+        cursor.execute(sql)
+        resultado = cursor.fetchone()
+        nombre_imagen = resultado[0]
+        sql = f"DELETE FROM producto WHERE idproducto = {id_producto}"
+        cursor.execute(sql)
+        conexion.connection.commit()
+        os.remove(os.path.join('static', nombre_imagen))
+        return redirect('/')
     return redirect('/')
 
 

@@ -106,7 +106,7 @@ def registro_usuario():
                 session['conectado'] = True #En este if hay que comparar los roles en el futuro
                 # Agregar la id aca con el lastrow creo que era (problemas a futuro)
             else:
-                flash("LAS CONTRASEÑAS NO COINCIDEN")
+                flash("LAS CONTRASEÑAS NO COINCIDEN") #Revisar los flash en html
                 return redirect('/nuevo_usuario')
     except Exception as e:
         print("Error MySQL:", str(e))

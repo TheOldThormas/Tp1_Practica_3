@@ -33,7 +33,6 @@ def variables_jinja():
         datos['usuario'] = session['username']
         datos['id_usuario'] = session['id_usuario']
         datos["sesion"] = session['conectado']
-        print(datos)
     except Exception as e:
         print("Todavia no hay nadie logueado, el try es para que no tire error")
     return datos
@@ -41,7 +40,7 @@ def variables_jinja():
 
 @app.route('/inicio_sesion')
 def inicio_sesion():
-    return render_template('inicio_sesion.html')
+    return render_template('inicio_sesion.html') #carga el documento html
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -62,6 +61,7 @@ def login():
             session['username'] = usuario
             session['conectado'] = True
             session['id_usuario'] = tabla[0]
+            session['passw']=tabla[4]
             flash("Inicio de sesión exitoso")
             return redirect('/')
         else:
@@ -75,7 +75,7 @@ def login():
 def cerrar():
     session.pop('username', None)
     session.pop('conectado', None)
-    return redirect('/')
+    return redirect('/') #redirecciona a una ruta dentro del archivo python
 
 @app.route('/nuevo_usuario')
 def nuevo_usuario():
@@ -105,6 +105,7 @@ def registro_usuario():
                 session['id_usuario'] = cursor.lastrowid
                 session['username'] = nombre_usuario
                 session['conectado'] = True #En este if hay que comparar los roles en el futuro
+                session['passw'] = passw
             else:
                 flash("LAS CONTRASEÑAS NO COINCIDEN")
                 return redirect('/nuevo_usuario')
@@ -112,23 +113,72 @@ def registro_usuario():
         print("Error MySQL:", str(e))
     return redirect('/')
 
-@app.route('/datos_usuario')
+@app.route('/validar_usuario')
+def validar_usuario():
+    return render_template('validacion.html')
+
+@app.route('/datos_usuario', methods=['POST','GET'])
 def datos_usuario():
     if 'conectado' in session:
-        try:
-            cursor = conexion.connection.cursor()
-            sql = f"SELECT * FROM usuario where idusuario={session['id_usuario']}"
-            cursor.execute(sql)
-            tabla = cursor.fetchone()
-        except Exception as e:
-            print("Error MySQL:", str(e))
-        return render_template('/usuario.html',tabla=tabla)
+        if 'validacion' not in session:
+            passw=request.form.get('passw')
+            if check_password_hash(session['passw'], passw):
+                session['validacion']=passw
+                try:
+                    cursor = conexion.connection.cursor()
+                    sql = f"SELECT * FROM usuario where idusuario={session['id_usuario']}"
+                    cursor.execute(sql)
+                    tabla = cursor.fetchone()
+                except Exception as e:
+                    print("Error MySQL:", str(e))
+                return render_template('/usuario.html',tabla=tabla)
+            else:
+                flash("La contraseña es incorrecta")
+                return redirect('/validar_usuario')
+        else:
+            try:
+                cursor = conexion.connection.cursor()
+                sql = f"SELECT * FROM usuario where idusuario={session['id_usuario']}"
+                cursor.execute(sql)
+                tabla = cursor.fetchone()
+            except Exception as e:
+                print("Error MySQL:", str(e))
+            return render_template('/usuario.html',tabla=tabla)
     else:
         return redirect('/inicio_sesion')
     
-@app.route('/actualizar_usuario')
+@app.route('/actualizar_usuario', methods=['POST','GET'])
 def actualizar_usuario():
-    pass
+    nombre=request.form.get('nombre')
+    apellido=request.form.get('apellido')
+    nombre_usuario=request.form.get('nombre_usuario')
+    passw=request.form.get('passw')
+    passw2=request.form.get('re_passw')
+    if passw:
+        if passw==passw2:
+            try:
+                cursor = conexion.connection.cursor()
+                passw=generate_password_hash(passw)
+                sql=f"UPDATE `imagenes`.`usuario` SET `nombre_per` = '{nombre}', `apellido_per` = '{apellido}', `nombre_usuario` = '{nombre_usuario}', `pass_usuario` = '{passw}' WHERE (`idusuario` = '{session['id_usuario']}');"
+                cursor.execute(sql)
+                conexion.connection.commit() 
+                session['username'] = nombre_usuario
+                session['passw'] = passw
+            except Exception as e:
+                print("Error MySQL:", str(e))
+        else:
+            flash("Las contraseñas no coinciden")
+            return redirect("/datos_usuario")
+    else:
+        try:
+            cursor = conexion.connection.cursor()
+            sql=f"UPDATE `imagenes`.`usuario` SET `nombre_per` = '{nombre}', `apellido_per` = '{apellido}', `nombre_usuario` = '{nombre_usuario}' WHERE (`idusuario` = '{session['id_usuario']}');"
+            cursor.execute(sql)
+            conexion.connection.commit() 
+            session['username'] = nombre_usuario
+        except Exception as e:
+            print("Error MySQL:", str(e))
+    return redirect("/")
 
 @app.route('/buscar', methods=['GET'])
 @app.route('/buscar/<int:pagina>', methods=['GET'])

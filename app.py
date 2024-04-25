@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, flash
 from flask_mysqldb import MySQL
 from flask_session import Session
+from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -17,6 +18,14 @@ app.config['MYSQL_PASSWORD'] = '123456789'
 app.config['MYSQL_DB'] = 'imagenes'
 conexion = MySQL(app)
 
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT']=587
+app.config['MAIL_USE_TLS']=True
+app.config['MAIL_USE_SSL']=False
+app.config['MAIL_USERNAME']='trabajopractico454@gmail.com'
+app.config['MAIL_DEFAULT_SENDER']='trabajopractico454@gmail.com'
+app.config['MAIL_PASSWORD']='uina xlma ojul yjed'
+correo_app=Mail(app)
 
 @app.context_processor
 def variables_jinja():
@@ -84,6 +93,18 @@ def cerrar():
 def nuevo_usuario():
     return render_template('nuevo_usuario.html')
 
+@app.route('/confirmar_email')
+def confirmar_email():
+    try:
+        cursor = conexion.connection.cursor()
+        sql = f"UPDATE `imagenes`.`usuario` SET `verificacion` = '1' WHERE (`idusuario` = '{session['id_usuario']}');"
+        cursor.execute(sql)
+        conexion.connection.commit()
+        flash('Correo verificado correctamente','success')
+    except Exception as e:
+        print("Error MySQL:", str(e))
+    return redirect('/')
+
 @app.route('/registro_usuario', methods=['GET' ,'POST'])
 def registro_usuario():
     nombre=request.form.get('nombre')
@@ -91,31 +112,42 @@ def registro_usuario():
     nombre_usuario=request.form.get('nombre_usuario')
     passw=request.form.get('passw')
     passw2=request.form.get('re_passw')
+    correo=request.form.get('correo')
     try:
         cursor = conexion.connection.cursor()
         sql = f"SELECT nombre_usuario FROM usuario where nombre_usuario='{nombre_usuario}';"
         cursor.execute(sql)
-        tabla = cursor.fetchone()
-        if tabla:
-            flash(f'El nombre de usuario: "{nombre_usuario}" ya esta en uso','warning')
-            return render_template('nuevo_usuario.html',nombre=nombre,apellido=apellido,passw=passw,passw2=passw2)
+        tabla=cursor.fetchone()
+        sql = f"SELECT correo_usuario FROM usuario where correo_usuario='{correo}';"
+        cursor.execute(sql)
+        tabla1 = cursor.fetchone()
+        if tabla or tabla1:
+            if tabla:
+                flash(f'El nombre de usuario: "{nombre_usuario}" ya esta en uso','warning')
+                return render_template('nuevo_usuario.html',nombre=nombre,apellido=apellido,passw=passw,passw2=passw2,correo=correo)
+            if tabla1:
+                flash(f'El correo electronico: "{correo}" ya esta en uso','warning')
+                return render_template('nuevo_usuario.html',nombre=nombre,apellido=apellido,passw=passw,passw2=passw2,nombre_usuario=nombre_usuario)     
         else:
             if passw==passw2:
                 passw=generate_password_hash(passw)
-                sql = f"INSERT INTO `imagenes`.`usuario` (`nombre_per`, `apellido_per`, `nombre_usuario`, `pass_usuario`, `rol`) VALUES ('{nombre}', '{apellido}', '{nombre_usuario}', '{passw}', '2');"
+                sql = f"INSERT INTO `imagenes`.`usuario` (`nombre_per`, `apellido_per`, `nombre_usuario`, `pass_usuario`, `rol`, `correo_usuario`, `verificacion`) VALUES ('{nombre}', '{apellido}', '{nombre_usuario}', '{passw}', '2', '{correo}', '0');"
                 cursor.execute(sql)
                 conexion.connection.commit() #Actualiza la base de datos para que se vea el nuevo insert
                 session['id_usuario'] = cursor.lastrowid
                 session['username'] = nombre_usuario
                 session['conectado'] = True #En este if hay que comparar los roles en el futuro
                 session['passw'] = passw
-                sql = f"SELECT rol FROM usuario where id_usuario={session['id_usuario']};"
+                sql = f"SELECT rol FROM usuario where idusuario={session['id_usuario']};"
                 cursor.execute(sql)
                 tabla = cursor.fetchone()
                 session['rol']=tabla[0]
+                mensaje=Message('Bienvenido a nuesta super pagina!',recipients=[correo])
+                mensaje.html=render_template('correo.html',nombre_usuario=nombre_usuario)
+                correo_app.send(mensaje)
             else:
                 flash("Las contraseñas no coinciden","danger")
-                return render_template('nuevo_usuario.html',nombre=nombre,apellido=apellido,nombre_usuario=nombre_usuario)
+                return render_template('nuevo_usuario.html',nombre=nombre,apellido=apellido,nombre_usuario=nombre_usuario,correo=correo)
     except Exception as e:
         print("Error MySQL:", str(e))
     flash(f'Cuenta creada con exito, bienvenido: "{nombre_usuario}"','success')

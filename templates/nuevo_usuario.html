@@ -31,6 +31,13 @@
         <label for="registrar_usuario" class="form-label">Ingrese nombre de usuario</label>
         <input type="text" class="form-control" id="registrar_usuario" name="nombre_usuario" value="{%if nombre_usuario%}{{nombre_usuario}}{%endif%}" required>
       </div>
+      <div class="row  mx-auto d-flex justify-content-center align-items-center">
+        <div class="col-md-6">
+          <label for="correo" class="form-label">Correo Electrónico</label>
+          <input type="email" class="form-control" id="correo" name="correo" value="{%if correo%}{{correo}}{%endif%}" required>
+        </div>
+      </div>
+    </div>
       </div>
       <div class="row  mx-auto d-flex justify-content-center align-items-center">
       <div class="col-md-3">

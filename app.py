@@ -13,8 +13,8 @@ app.config['SESSION_TYPE']='filesystem'
 Session(app)
 
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'julian'
-app.config['MYSQL_PASSWORD'] = '123456789'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'ibA_pX2V5Z-#3:4Tcs'
 app.config['MYSQL_DB'] = 'imagenes'
 conexion = MySQL(app)
 
@@ -191,7 +191,6 @@ def datos_usuario():
 def actualizar_usuario():
     nombre=request.form.get('nombre')
     apellido=request.form.get('apellido')
-    nombre_usuario=request.form.get('nombre_usuario')
     passw=request.form.get('passw')
     passw2=request.form.get('re_passw')
     if passw:
@@ -199,10 +198,9 @@ def actualizar_usuario():
             try:
                 cursor = conexion.connection.cursor()
                 passw=generate_password_hash(passw)
-                sql=f"UPDATE `imagenes`.`usuario` SET `nombre_per` = '{nombre}', `apellido_per` = '{apellido}', `nombre_usuario` = '{nombre_usuario}', `pass_usuario` = '{passw}' WHERE (`idusuario` = '{session['id_usuario']}');"
+                sql=f"UPDATE `imagenes`.`usuario` SET `nombre_per` = '{nombre}', `apellido_per` = '{apellido}', `pass_usuario` = '{passw}' WHERE (`idusuario` = '{session['id_usuario']}');"
                 cursor.execute(sql)
                 conexion.connection.commit() 
-                session['username'] = nombre_usuario
                 session['passw'] = passw
             except Exception as e:
                 print("Error MySQL:", str(e))
@@ -212,10 +210,9 @@ def actualizar_usuario():
     else:
         try:
             cursor = conexion.connection.cursor()
-            sql=f"UPDATE `imagenes`.`usuario` SET `nombre_per` = '{nombre}', `apellido_per` = '{apellido}', `nombre_usuario` = '{nombre_usuario}' WHERE (`idusuario` = '{session['id_usuario']}');"
+            sql=f"UPDATE `imagenes`.`usuario` SET `nombre_per` = '{nombre}', `apellido_per` = '{apellido}' WHERE (`idusuario` = '{session['id_usuario']}');"
             cursor.execute(sql)
             conexion.connection.commit() 
-            session['username'] = nombre_usuario
         except Exception as e:
             print("Error MySQL:", str(e))
     return redirect("/")

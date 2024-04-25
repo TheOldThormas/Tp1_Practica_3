@@ -1,3 +1,8 @@
+CREATE USER 'admin'@'%' IDENTIFIED BY 'ibA_pX2V5Z-#3:4Tcs';
+GRANT ALL PRIVILEGES ON imagenes.* TO 'admin'@'%';
+FLUSH PRIVILEGES;
+CREATE DATABASE  IF NOT EXISTS `imagenes` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `imagenes`;
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
 -- Host: localhost    Database: imagenes
@@ -127,6 +132,10 @@ LOCK TABLES `usuario` WRITE;
 INSERT INTO `usuario` VALUES (3,'tomas ramon','gomez','sofipro1','scrypt:32768:8:1$tIvadPdzGannkQ1a$9c558e3525d95c566beb0523f21cdc64c7c58f67fde6d1318b24cbe98885402d8d4d3fddb8cd9b760fc7fce64c5c2c4c43dec55aa2195cfa726fb0484777e4bd',1,'juliansmurf55@gmail.com',0),(17,'esteban','veisaga','1214efidsmi','scrypt:32768:8:1$dcNl186SOoTzTtjv$fad33497a439e2059693ec55a789b352d3a452ec81d3e0c5cefc7b6a1972301045caa1c6984789b86078db26ef9fccf721bf7348162490ee27b38d586b8c1410',2,'tomigamer1@gmail.com',0),(22,'julian','perez','kilsdhjgoidjsfd','scrypt:32768:8:1$J98nz2oWYlxBCkRU$ae46137f2ba5af1f98c1b9eaf6bdaedab591c4e308e0da3e46bb0c9f10159f7ee1ff911abaaf16f4fd14de02976b00ac37c8edf3205690149eaadc424cd7026c',2,'juliangaldamez11@gmail.com',0),(24,'sofi','pro','prosofi','scrypt:32768:8:1$TyonlWefa3Ms32yc$1ed3d86a3dcef2dddb4bc43aa70ac72a39023a862e5c724dcdbf6ba7e23377c9319336de5dc090fbdbbc38afb4f4f725ff1ee43ff7ff882db74b7815b08ea81e',2,'sofisandobal10@gmail.com',0),(27,'toma','game','tomasgamer123','scrypt:32768:8:1$RgLVB2whZ0l5rxRe$ae3fc1e0663d89032ca5806fa94a68249fb7dc235f2bd3730af0333b889e105be5ad75857ae125ef40861c7e10599bba901df9108ed9e8e8dc89d6bced8bc5a2',2,'1tomilopez@gmail.com',0),(32,'julian','102395u23','julian12323rwef','scrypt:32768:8:1$SsOuLJfpl4qvaLhv$97518daed0f19619d318dbc34c1921ddefe16db9e6cbcea8d71e1c252dc6513fd8671db525bd45b206df63966685d403efb34efd2f16a0b2288ea84b32a95838',2,'juliangaldamez0@gmail.com',1);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'imagenes'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -137,4 +146,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-24 23:42:59
+-- Dump completed on 2024-04-25  2:53:18

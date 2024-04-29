@@ -71,6 +71,12 @@ def login():
             session['passw']=tabla[4]
             session['rol']=tabla[5]
             flash(f'Bienvenido {usuario}!','success')
+            fecha = datetime.now()
+            cursor = conexion.connection.cursor()
+            sql = f"INSERT INTO `sesiones` (`usuario_sesion`, `fecha_inicio`) VALUES ('{session['id_usuario']}', '{fecha}');"
+            cursor.execute(sql)
+            conexion.connection.commit() #actualiza la base de datos con el ultimo inset?
+            session['id_sesion']=cursor.lastrowid
             return redirect("/")
         else:
             flash("La contraseña es incorrecta","danger")
@@ -81,12 +87,23 @@ def login():
 
 @app.route('/cerrar')
 def cerrar():
+    try:
+        fecha = datetime.now()
+        cursor = conexion.connection.cursor()
+        sql = f"UPDATE `sesiones` SET `fecha_final` = '{fecha}' WHERE (`idsesiones` = '{session['id_sesion']}');"
+        print(sql)
+        cursor.execute(sql)
+        conexion.connection.commit()
+
+    except Exception as e:
+        print("Error MySQL:", str(e))
     session.pop('username', None)
     session.pop('conectado', None)
     session.pop('id_usuario', None)
     session.pop('validacion', None)
     session.pop('rol', None)
     session.pop('passw', None)
+    session.pop('id_sesion', None)
     return redirect('/') #redirecciona a una ruta dentro del archivo python
 
 @app.route('/nuevo_usuario')

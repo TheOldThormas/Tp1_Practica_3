@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
 -- Host: localhost    Database: imagenes
 -- ------------------------------------------------------
--- Server version	8.0.33
+-- Server version	8.0.34
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -95,6 +95,34 @@ INSERT INTO `roles` VALUES (1,'administrador'),(2,'usuario');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `sesiones`
+--
+
+DROP TABLE IF EXISTS `sesiones`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sesiones` (
+  `idsesiones` int NOT NULL AUTO_INCREMENT,
+  `usuario_sesion` int NOT NULL,
+  `fecha_inicio` datetime NOT NULL,
+  `fecha_final` datetime DEFAULT NULL,
+  PRIMARY KEY (`idsesiones`),
+  KEY `id_usuario_idx` (`usuario_sesion`),
+  CONSTRAINT `id_usuario` FOREIGN KEY (`usuario_sesion`) REFERENCES `usuario` (`idusuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sesiones`
+--
+
+LOCK TABLES `sesiones` WRITE;
+/*!40000 ALTER TABLE `sesiones` DISABLE KEYS */;
+INSERT INTO `sesiones` VALUES (4,3,'2024-04-29 20:24:20',NULL),(5,3,'2024-04-29 20:28:03',NULL),(6,3,'2024-04-29 20:39:41',NULL),(7,3,'2024-04-29 20:46:47','2024-04-29 20:46:50');
+/*!40000 ALTER TABLE `sesiones` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `usuario`
 --
 
@@ -115,7 +143,7 @@ CREATE TABLE `usuario` (
   UNIQUE KEY `correo_usuario_UNIQUE` (`correo_usuario`),
   KEY `id_rol_idx` (`rol`),
   CONSTRAINT `id_rol` FOREIGN KEY (`rol`) REFERENCES `roles` (`idroles`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,7 +152,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (3,'tomas ramon','gomez','sofipro1','scrypt:32768:8:1$tIvadPdzGannkQ1a$9c558e3525d95c566beb0523f21cdc64c7c58f67fde6d1318b24cbe98885402d8d4d3fddb8cd9b760fc7fce64c5c2c4c43dec55aa2195cfa726fb0484777e4bd',1,'juliansmurf55@gmail.com',0),(17,'esteban','veisaga','1214efidsmi','scrypt:32768:8:1$dcNl186SOoTzTtjv$fad33497a439e2059693ec55a789b352d3a452ec81d3e0c5cefc7b6a1972301045caa1c6984789b86078db26ef9fccf721bf7348162490ee27b38d586b8c1410',2,'tomigamer1@gmail.com',0),(22,'julian','perez','kilsdhjgoidjsfd','scrypt:32768:8:1$J98nz2oWYlxBCkRU$ae46137f2ba5af1f98c1b9eaf6bdaedab591c4e308e0da3e46bb0c9f10159f7ee1ff911abaaf16f4fd14de02976b00ac37c8edf3205690149eaadc424cd7026c',2,'juliangaldamez11@gmail.com',0),(24,'sofi','pro','prosofi','scrypt:32768:8:1$TyonlWefa3Ms32yc$1ed3d86a3dcef2dddb4bc43aa70ac72a39023a862e5c724dcdbf6ba7e23377c9319336de5dc090fbdbbc38afb4f4f725ff1ee43ff7ff882db74b7815b08ea81e',2,'sofisandobal10@gmail.com',0),(27,'toma','game','tomasgamer123','scrypt:32768:8:1$RgLVB2whZ0l5rxRe$ae3fc1e0663d89032ca5806fa94a68249fb7dc235f2bd3730af0333b889e105be5ad75857ae125ef40861c7e10599bba901df9108ed9e8e8dc89d6bced8bc5a2',2,'1tomilopez@gmail.com',0),(32,'julian','102395u23','julian12323rwef','scrypt:32768:8:1$SsOuLJfpl4qvaLhv$97518daed0f19619d318dbc34c1921ddefe16db9e6cbcea8d71e1c252dc6513fd8671db525bd45b206df63966685d403efb34efd2f16a0b2288ea84b32a95838',2,'juliangaldamez0@gmail.com',1);
+INSERT INTO `usuario` VALUES (3,'tomas ramon','gomez','sofipro1','scrypt:32768:8:1$tIvadPdzGannkQ1a$9c558e3525d95c566beb0523f21cdc64c7c58f67fde6d1318b24cbe98885402d8d4d3fddb8cd9b760fc7fce64c5c2c4c43dec55aa2195cfa726fb0484777e4bd',1,'juliansmurf55@gmail.com',0),(17,'esteban','veisaga','1214efidsmi','scrypt:32768:8:1$dcNl186SOoTzTtjv$fad33497a439e2059693ec55a789b352d3a452ec81d3e0c5cefc7b6a1972301045caa1c6984789b86078db26ef9fccf721bf7348162490ee27b38d586b8c1410',2,'tomigamer1@gmail.com',0),(22,'julian','perez','kilsdhjgoidjsfd','scrypt:32768:8:1$J98nz2oWYlxBCkRU$ae46137f2ba5af1f98c1b9eaf6bdaedab591c4e308e0da3e46bb0c9f10159f7ee1ff911abaaf16f4fd14de02976b00ac37c8edf3205690149eaadc424cd7026c',2,'juliangaldamez11@gmail.com',0),(24,'sofi','pro','prosofi','scrypt:32768:8:1$TyonlWefa3Ms32yc$1ed3d86a3dcef2dddb4bc43aa70ac72a39023a862e5c724dcdbf6ba7e23377c9319336de5dc090fbdbbc38afb4f4f725ff1ee43ff7ff882db74b7815b08ea81e',2,'sofisandobal10@gmail.com',0),(27,'toma','game','tomasgamer123','scrypt:32768:8:1$RgLVB2whZ0l5rxRe$ae3fc1e0663d89032ca5806fa94a68249fb7dc235f2bd3730af0333b889e105be5ad75857ae125ef40861c7e10599bba901df9108ed9e8e8dc89d6bced8bc5a2',2,'1tomilopez@gmail.com',0),(32,'julian','102395u23','julian12323rwef','scrypt:32768:8:1$SsOuLJfpl4qvaLhv$97518daed0f19619d318dbc34c1921ddefe16db9e6cbcea8d71e1c252dc6513fd8671db525bd45b206df63966685d403efb34efd2f16a0b2288ea84b32a95838',2,'juliangaldamez0@gmail.com',1),(33,'david','veisaga','david1','scrypt:32768:8:1$9Rlhh72KFwpRgH8c$48f5f06b7afc00d7d4fe399fe9ed4707453b1fd61614f90199dc79e54f8e50b2e6224da4d3d00be2569a23f1d33e643897c4cd381336522184fd3454c822633e',2,'davidveisaga@gmail.com',0);
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -137,4 +165,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-24 23:42:59
+-- Dump completed on 2024-04-29 20:49:38

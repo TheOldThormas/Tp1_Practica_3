@@ -162,6 +162,11 @@ def registro_usuario():
                 mensaje=Message('Bienvenido a nuesta super pagina!',recipients=[correo])
                 mensaje.html=render_template('correo.html',nombre_usuario=nombre_usuario)
                 correo_app.send(mensaje)
+                fecha = datetime.now()
+                sql = f"INSERT INTO `sesiones` (`usuario_sesion`, `fecha_inicio`) VALUES ('{session['id_usuario']}', '{fecha}');"
+                cursor.execute(sql)
+                conexion.connection.commit() #actualiza la base de datos con el ultimo inset?
+                session['id_sesion']=cursor.lastrowid
             else:
                 flash("Las contraseñas no coinciden","danger")
                 return render_template('nuevo_usuario.html',nombre=nombre,apellido=apellido,nombre_usuario=nombre_usuario,correo=correo)

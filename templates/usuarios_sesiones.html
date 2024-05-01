@@ -1,0 +1,27 @@
+{% extends './layout.html' %}
+{% block title %}Lista de Usuarios{% endblock %}
+{% block body %}
+<div class="container text-center">
+    <h1>Lista de usuarios</h1>
+</div>
+<div class="container mt-4">
+    <table class="table">
+        <thead class="table-primary">
+            <tr>
+                <th scope="col">Nombre de Usuario</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Sesiones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for y in sesiones %}
+            <tr>
+                <td>{{y[3]}}</td>
+                <td>{{y[6]}}</td>
+                <td><a class="btn btn-outline-secondary btn-sm" href="/detalles_sesion?id={{y[0]}}">Ver detalles</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

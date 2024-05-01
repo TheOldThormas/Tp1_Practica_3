@@ -14,7 +14,7 @@ Session(app)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'ibA_pX2V5Z-#3:4Tcs'
+app.config['MYSQL_PASSWORD'] = 'AltaEsaBaseDeDatos'
 app.config['MYSQL_DB'] = 'imagenes'
 conexion = MySQL(app)
 
@@ -109,6 +109,38 @@ def cerrar():
 @app.route('/nuevo_usuario')
 def nuevo_usuario():
     return render_template('nuevo_usuario.html')
+
+@app.route('/usuarios')
+def usuarios():
+    if 'conectado' in session and session['rol']==1: #cuando es administrador
+        try:
+            cursor = conexion.connection.cursor()
+            sql = f"select * from usuario;"
+            cursor.execute(sql)
+            sesiones = cursor.fetchall()
+        except Exception as e:
+            print("Error MySQL:", str(e))
+        return render_template('usuarios_sesiones.html', sesiones=sesiones)
+    else: 
+        return redirect('/')
+
+@app.route('/detalles_sesion', methods=['GET' ,'POST'])
+def detalles_sesion():
+    if 'conectado' in session and session['rol']==1: #cuando esta en administrador
+        id=request.args.get('id') #capta el numero de id que trae la ruta (?id=numero)
+        try:
+            cursor = conexion.connection.cursor()
+            sql = f"select * from usuario where idusuario={id};"
+            cursor.execute(sql)
+            usuario_sesion = cursor.fetchone() #solo toma una tupla, un solo resultado
+            sql = f"select * from sesiones where usuario_sesion={id};"
+            cursor.execute(sql)
+            sesiones = cursor.fetchall()
+        except Exception as e:
+            print("Error MySQL:", str(e))
+        return render_template('detalles_sesion.html', usuario_sesion=usuario_sesion, sesiones=sesiones)
+    else: 
+        return redirect('/')
 
 @app.route('/confirmar_email')
 def confirmar_email():

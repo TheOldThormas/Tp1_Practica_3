@@ -13,8 +13,8 @@ app.config['SESSION_TYPE']='filesystem'
 Session(app)
 
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'AltaEsaBaseDeDatos'
+app.config['MYSQL_USER'] = 'julian'
+app.config['MYSQL_PASSWORD'] = '123456789'
 app.config['MYSQL_DB'] = 'imagenes'
 conexion = MySQL(app)
 
@@ -133,7 +133,7 @@ def detalles_sesion():
             sql = f"select * from usuario where idusuario={id};"
             cursor.execute(sql)
             usuario_sesion = cursor.fetchone() #solo toma una tupla, un solo resultado
-            sql = f"select * from sesiones where usuario_sesion={id};"
+            sql = f"select * from sesiones where usuario_sesion={id} order by idsesiones desc;"
             cursor.execute(sql)
             sesiones = cursor.fetchall()
         except Exception as e:

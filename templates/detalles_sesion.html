@@ -1,12 +1,12 @@
 {% extends './layout.html' %}
 {% block title %}Lista de Usuarios{% endblock %}
 {% block body %}
-<div class="container text-center">
-    <h1>Concurrencias {{usuario_sesion[3]}}</h1>
+<div class="container text-center mt-4">
+    <h1>Concurrencias: {{usuario_sesion[3]}}</h1>
 </div>
 <div class="container mt-4">
-    <table class="table">
-        <thead class="table-primary">
+    <table class="table table-bordered border-dark">
+        <thead class="table-dark">
             <tr>
                 <th scope="col">Numero de sesion</th>
                 <th scope="col">Fecha de inicio</th>
@@ -18,7 +18,7 @@
             <tr>
                 <td>{{y[0]}}</td>
                 <td>{{y[2]}}</td>
-                <td>{{y[3]}}</td>
+                <td>{%if y[3]!=None%}{{y[3]}}{%else%}----{%endif%}</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -5,17 +5,16 @@
 <br>
 <div class="container text-center mt-4">
   <h2>Nuevo usuario</h2>
-  <br>
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for category, message in messages %}
-        <div class="alert alert-{{category}}" role="alert">
+        <div class="alert alert-{{category}} mt-2 mb-2" role="alert">
           <h2>Error: {{message}}</h2>
         </div>
       {% endfor %}
     {% endif %}
   {% endwith %}
-  <br>
+<div class="container text-center mt-4">
   <form action="/registro_usuario" method="POST"> <!-- Action es lo mismo que href pero manda todo el contenido del formulario -->
     <div class="row  mx-auto d-flex justify-content-center align-items-center">
       <div class="col-md-3">
@@ -26,10 +25,12 @@
         <label for="apellido" class="form-label">Apellido</label>
         <input type="text" class="form-control" id="apellido" name="apellido" value="{%if apellido%}{{apellido}}{%endif%}" required>
       </div>
+    </div>
       <div class="row  mx-auto d-flex justify-content-center align-items-center">
       <div class="col-md-6">
         <label for="registrar_usuario" class="form-label">Ingrese nombre de usuario</label>
         <input type="text" class="form-control" id="registrar_usuario" name="nombre_usuario" value="{%if nombre_usuario%}{{nombre_usuario}}{%endif%}" required>
+      </div>
       </div>
       <div class="row  mx-auto d-flex justify-content-center align-items-center">
         <div class="col-md-6">
@@ -37,7 +38,6 @@
           <input type="email" class="form-control" id="correo" name="correo" value="{%if correo%}{{correo}}{%endif%}" required>
         </div>
       </div>
-    </div>
       </div>
       <div class="row  mx-auto d-flex justify-content-center align-items-center">
       <div class="col-md-3">
@@ -49,7 +49,6 @@
         <input type="text" class="form-control" id="re_passw" name="re_passw" value="{%if passw2%}{{passw2}}{%endif%}" required>
       </div>
     </div>
-  </div>
     <div class="row mt-4 mx-auto d-flex justify-content-center align-items-center">
         <div class="col-12">
             <button type="submit" class="btn btn-primary">Registrarse</button>

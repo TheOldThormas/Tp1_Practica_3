@@ -2,5 +2,12 @@ FROM python:3
 COPY . /TP1_PRACTICA_3
 WORKDIR /TP1_PRACTICA_3
 RUN pip install -r requirements.txt
+EXPOSE 5000
 ENTRYPOINT ["python"]
 CMD ["app.py"]
+
+ENV MYSQL_HOST=localhost
+ENV MYSQL_PORT=3307
+ENV MYSQL_USER=root
+ENV MYSQL_PASSWORD=AltaEsaBaseDeDatos
+ENV MYSQL_DATABASE=imagenes

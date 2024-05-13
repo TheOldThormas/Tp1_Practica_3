@@ -6,16 +6,18 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
+from config import Config
 
 app = Flask(__name__)
 app.config['SECRET_KEY']='12345'
 app.config['SESSION_TYPE']='filesystem'
 Session(app)
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'AltaEsaBaseDeDatos'
-app.config['MYSQL_DB'] = 'imagenes'
+app.config.from_object(Config)
+# app.config['MYSQL_HOST'] = 'localhost'
+# app.config['MYSQL_USER'] = 'root'
+# app.config['MYSQL_PASSWORD'] = 'AltaEsaBaseDeDatos'
+# app.config['MYSQL_DB'] = 'imagenes'
 conexion = MySQL(app)
 
 app.config['MAIL_SERVER']='smtp.gmail.com'
